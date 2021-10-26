@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import Chronicle from "../models/chronicle";
 import { Outpost } from "../models/outpost";
 
 
@@ -40,8 +41,17 @@ const Outposts ={
     delete: (id: number) => request.delete<void>(`/outpost/${id}`)
 }
 
+const Chronicles ={
+    list: (outpostId: number) => request.get<Chronicle[]>(`/outpost/${outpostId}/chronicle`),
+    details: (id:number,outpostId: number) => request.get<Chronicle>(`/outpost/${outpostId}/chronicle/${id}`),
+    create: (chronicle: Chronicle,outpostId:number, id:number) => request.post<void>(`/outpost/${outpostId}/chronicle/${id}`,chronicle),
+    update: (chronicle: Chronicle,outpostId:number, id:number) => request.put<void>(`/outpost/${outpostId}/chronicle/${id}`,chronicle),
+    delete: (outpostId:number, id:number) => request.delete<void>(`/outpost/${outpostId}/chronicle/${id}`)
+}
+
 const agent ={
-    Outposts
+    Outposts,
+    Chronicles
 }
 
 export default agent;

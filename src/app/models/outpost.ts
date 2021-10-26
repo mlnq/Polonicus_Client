@@ -1,4 +1,6 @@
-export interface Outpost {
+import Chronicles from "./chronicle";
+
+export interface Outpost{
     id: number;
     name: string;
     description: string;
@@ -9,10 +11,4 @@ export interface Outpost {
     postalCode: string;
     chronicles?: (Chronicles)[] | null;
   }
-  export interface Chronicles {
-    id: number;
-    name: string;
-    description: string;
-    publicationDate: string;
-  }
-  
+

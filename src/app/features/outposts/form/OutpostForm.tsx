@@ -1,6 +1,8 @@
 import { observer } from "mobx-react-lite";
-import React, { ChangeEvent,useState } from "react";
-import { ButtonGroup, Form, Segment } from "semantic-ui-react";
+import React, { ChangeEvent,useEffect,useState } from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
+import { Button, ButtonGroup, Form, Segment } from "semantic-ui-react";
+import LoadingComponent from "../../../layout/LoadingComponent";
 import { Outpost } from "../../../models/outpost";
 import { useStore } from "../../../stores/store";
 
@@ -8,24 +10,29 @@ import { useStore } from "../../../stores/store";
 export default observer( function OutpostForm(){
 
     const {outpostStore} = useStore();
-    const {selectedOutpost, formClose,createOutpost,updateOutpost,loading} = outpostStore;
-
-
-    const initialState = selectedOutpost ?? {
+    const {createOutpost,updateOutpost,loading,loadOutpost,loadingInitial} = outpostStore;
+    
+    const history= useHistory();
+    const {id} = useParams<{id: string}>();
+    
+    const [outpost, setOutpost] = useState({
         id:0,
-        name: 'a',
-        description: 'a',
-        city: 'a',
-        street: 'a',
-        postalCode:'a',
+        name: '',
+        description: '',
+        city: '',
+        street: '',
+        postalCode:'',
         population: 100,
-        category:'a'
-    }
+        category:''
+    })
 
-    const [outpost,setOutpost] = useState(initialState);
+    useEffect(()=>{
+        if(id!== undefined) loadOutpost(parseInt(id)).then(o=>{setOutpost(o!)});
+    },[id,loadOutpost])
 
     function handleSubmit(){
-        outpost.id ? updateOutpost(outpost) : createOutpost(outpost);
+        if(!outpost.id) createOutpost(outpost).then(()=> history.push(`/outposts`))
+        else updateOutpost(outpost).then(()=> history.push(`/outposts`))
     }
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
@@ -33,6 +40,8 @@ export default observer( function OutpostForm(){
         const {name,value} = event.target;
         setOutpost({...outpost,[name]: value});
     }
+    if(loadingInitial) return <LoadingComponent content="Wczytywanie formularza"/>;
+
     return(
         <Segment clearing>
             <Form onSubmit={handleSubmit} autoComplete='off'>
@@ -43,9 +52,9 @@ export default observer( function OutpostForm(){
                 <Form.Input placeholder='population' type='number' value={outpost.population} name='population' onChange={handleInputChange}/>
                 <Form.Input placeholder='category' value={outpost.category} name='category' onChange={handleInputChange}/>
                 <ButtonGroup>
-                    <Form.Button loading={loading} positive content='Submit'/>
-                    <Form.Button onClick={formClose} content='Cancel'/>
-                </ButtonGroup>
+                    <Button  loading={loading} positive content='Zatwierdź'/>
+                    <Button as={Link} to={`/outposts`} basic color='grey' content='Cofnij'/>
+                </ButtonGroup>  
             </Form>
         </Segment>
     )

@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent, useState } from "react";
+import { Link } from "react-router-dom";
 import { Segment,Item, Button, Label } from "semantic-ui-react";
 import { Outpost } from "../../../models/outpost";
 import { useStore } from "../../../stores/store";
@@ -11,18 +12,20 @@ interface Props{
 }
 
 export default observer( function OutpostList(){
-
-
+    
+    
+    const {outpostStore} = useStore();
+    const {outposts,loading,deleteOutpost} = outpostStore;
+    
     const [target,setTarget] = useState(0);
-
+    
     function handleOutpostDelete(event: SyntheticEvent<HTMLButtonElement>,id:number){
         let currentButton =parseInt(event.currentTarget.id);
         setTarget(currentButton);
         deleteOutpost(id);
     }
-
-    const {outpostStore} = useStore();
-    const {outposts,loading,deleteOutpost} = outpostStore;
+    
+    
     return (
         <Segment>
             <Item.Group divided>
@@ -47,8 +50,8 @@ export default observer( function OutpostList(){
                                             content='Usuń' 
                                             color='black'
                                         />
-                                        <Button onClick={() => outpostStore.selectOutpost(outpost.id)} floated='right' content='Podgląd' color='red'/>
-                                        <Button floated='right' content='Czytaj' color='violet'/>
+                                        <Button as={Link} to={`/outposts/${outpost.id}`} floated='right' content='Podgląd' color='red'/>
+                                        <Button as={Link} to={`/outposts/${outpost.id}/chronicle`} floated='right' content='Czytaj' color='violet'/>
 
                                         <Label content={outpost.city}/>
                                     </Item.Extra>

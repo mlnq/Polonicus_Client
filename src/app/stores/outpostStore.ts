@@ -4,22 +4,25 @@ import { Outpost } from "../models/outpost";
 
 export default class OutpostStore{
 
-    outposts: Outpost[] = [];
+    outpostRegistry = new Map<number,Outpost>();
     selectedOutpost: Outpost | undefined = undefined;
-    editMode = false;
     loading = false;
-    loadingInitial = false;
+    loadingInitial: Boolean|undefined = undefined;
 
     constructor(){
         makeAutoObservable(this);
     }
 
+    get outposts() {
+        return Array.from(this.outpostRegistry.values());
+    }
+
     loadOutposts = async () =>{
-        this.setLoadingInitial(true);
+        this.loadingInitial = true;
         try{
             const outpostsLoad = await agent.Outposts.list();
             outpostsLoad.forEach(outpost => 
-                this.outposts.push(outpost)
+                this.outpostRegistry.set(outpost.id,outpost)
             );
             this.setLoadingInitial(false);
         }
@@ -29,28 +32,36 @@ export default class OutpostStore{
         }
     }
     
+    loadOutpost = async (id:number) => {
+        let outpost = this.outpostRegistry.get(id);
+        //EDIT zwaraca dane  do forma
+        if(outpost){
+            this.selectedOutpost = outpost;
+            return outpost;
+        }
+        else {
+            this.loadingInitial = true;
+            try{
+                outpost = await agent.Outposts.details(id);
+                this.outpostRegistry.set(outpost.id,outpost);
+                this.selectedOutpost = outpost;
+                this.setLoadingInitial(false);
+                return outpost;
+            }
+            catch(e)
+            {
+                console.log(e);
+                this.setLoadingInitial(false);
+            }
+        }
+
+    }
+
+
     setLoadingInitial = (state:boolean) => {
         this.loadingInitial=state;
     }
-
-    selectOutpost = (id: number) =>
-    {
-        this.selectedOutpost = this.outposts.find(o => o.id === id);
-    }
     
-    cancelSelectedOutpost = () =>{
-        this.selectedOutpost = undefined;
-    }
-
-    formOpen = (id?: number) =>
-    {
-        id ? this.selectOutpost(id) : this.cancelSelectedOutpost();
-        this.editMode = true;
-    }
-
-    formClose = () => {
-        this.editMode = false;
-    }
 
     createOutpost = async (outpost: Outpost) =>{
         this.loading =true;
@@ -59,12 +70,10 @@ export default class OutpostStore{
             // this.outposts=[];
             await agent.Outposts.create(outpost);
             runInAction(() => {
-                outpost.id=
-                this.outposts.push(outpost);
+                this.outpostRegistry.set(outpost.id,outpost);
                 this.selectedOutpost = outpost;
-                this.editMode=false;
+                // this.editMode=false;
                 this.loading=false;
-                // this.loadOutposts();
             });
         }
         catch(e){
@@ -83,9 +92,9 @@ export default class OutpostStore{
         try{
             await agent.Outposts.update(outpost);
             runInAction(()=>{
-                this.outposts= [...this.outposts.filter(x => x.id !== outpost.id),outpost];
+                this.outpostRegistry.set(outpost.id,outpost);
                 this.selectedOutpost=outpost;
-                this.editMode=false;
+                // this.editMode=false;
                 this.loading=false;
             });
         }
@@ -103,7 +112,7 @@ export default class OutpostStore{
         try{
              await agent.Outposts.delete(id);
              runInAction(()=>{
-                this.outposts= [...this.outposts.filter(x => x.id !== id)];
+                this.outpostRegistry.delete(id);
                 this.loading=false;
             });
         }

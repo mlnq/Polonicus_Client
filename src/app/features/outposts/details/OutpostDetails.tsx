@@ -1,16 +1,25 @@
-import React from "react";
+import { observer } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import { useParams } from "react-router";
+import { Link } from "react-router-dom";
 import { Button, Card } from "semantic-ui-react";
 import LoadingComponent from "../../../layout/LoadingComponent";
 import { useStore } from "../../../stores/store";
 
 
 
-export default function OutpostDetails()
+export default observer (function OutpostDetails()
 {
 
     const {outpostStore} = useStore();
-    const {selectedOutpost, cancelSelectedOutpost,formOpen} = outpostStore;
+    const {selectedOutpost,loadOutpost} = outpostStore;
+    const {id} = useParams<{id: string}>();
 
+    useEffect(()=>{
+        if(id) loadOutpost(parseInt(id));
+    },[id,loadOutpost])
+    
+    //obsługa w sytuacji kiedy outpost nie istnieje w kodzie
     if(! selectedOutpost) return <LoadingComponent/>;
 
     return (
@@ -28,10 +37,10 @@ export default function OutpostDetails()
             </Card.Content>
             <Card.Content extra>
                 <Button.Group>
-                        <Button onClick={() => formOpen(selectedOutpost?.id)} basic color='red' content='Edit'/>
-                        <Button onClick={cancelSelectedOutpost} basic color='grey' content='cancel'/>
+                        <Button as={Link} to={`/editOutpost/${id}`}  basic color='red' content='Edit'/>
+                        <Button as={Link} to={`/outposts`} basic color='grey' content='cancel'/>
                 </Button.Group>
             </Card.Content>
         </Card>
     );
-}
+});
