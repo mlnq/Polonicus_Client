@@ -11,28 +11,29 @@ import { useStore } from "../../../stores/store";
 export default observer (function OutpostDetails()
 {
 
-    const {outpostStore} = useStore();
-    const {selectedOutpost,loadOutpost,loadingInitial} = outpostStore;
+    const {chronicleStore} = useStore();
+    const {selectedChronicle,loadChronicle} = chronicleStore;
     const {id} = useParams<{id: string}>();
+    const {outpostId} = useParams<{outpostId: string}>();
 
     useEffect(()=>{
-        if(id) loadOutpost(parseInt(id));
-    },[id,loadOutpost])
+        if(id && outpostId) loadChronicle(parseInt(outpostId),parseInt(id));
+    },[id,loadChronicle])
     
     //obsługa w sytuacji kiedy outpost nie istnieje w kodzie
-    if(loadingInitial) return <LoadingComponent/>;
+    if(!selectedChronicle) return <LoadingComponent/>;
 
     return (
         <Card fluid>
             <Card.Content>
                     <Card.Header>
-                        {selectedOutpost?.name}
+                        {selectedChronicle?.name}
                     </Card.Header>
                     <Card.Meta>
-                        {selectedOutpost?.city}
+                        {'Kartka z kalendarza dzień: '+ selectedChronicle?.publicationDate}
                     </Card.Meta>
                     <Card.Description>
-                        {selectedOutpost?.description}
+                        {selectedChronicle?.description}
                     </Card.Description>
             </Card.Content>
             <Card.Content extra>

@@ -36,6 +36,7 @@ export default class OutpostStore{
         let outpost = this.outpostRegistry.get(id);
         //EDIT zwaraca dane  do forma
         if(outpost){
+            console.log(`Taki obiekt w promise istnieje id:${id}, outpostId: ${outpost.name}`);
             this.selectedOutpost = outpost;
             return outpost;
         }

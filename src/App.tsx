@@ -10,8 +10,8 @@ import { Route, useLocation } from 'react-router-dom';
 import HomePage from './app/features/home/HomePage';
 import OutpostForm from './app/features/outposts/form/OutpostForm';
 import OutpostDetails from './app/features/outposts/details/OutpostDetails';
-import ChroniclesDashBoard from './app/features/chronicles/Dashboard/ChroniclesDashboard';
-import ChroniclesList from './app/features/chronicles/Dashboard/ChroniclesList';
+import ChroniclesDashBoard from './app/features/chronicles/dashboard/ChroniclesDashboard';
+import ChroniclesDetails from './app/features/chronicles/dashboard/ChroniclesDetails';
 
 function App() {
   const location = useLocation();
@@ -27,7 +27,8 @@ function App() {
           
           <Route key={location.key} exact path={["/editOutpost/:id","/outpostCreate"]} component={OutpostForm}></Route>
           
-          <Route path={"/outposts/:id/chronicle"} component={ChroniclesDashBoard}></Route>
+          <Route exact path={"/outposts/:id/chronicle"} component={ChroniclesDashBoard}></Route>
+          <Route  path={"/outposts/:outpostId/chronicle/:id/details"} component={ChroniclesDetails}></Route>
         </Container>
     </>
   );

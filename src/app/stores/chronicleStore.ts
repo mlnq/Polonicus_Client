@@ -8,6 +8,7 @@ export default class ChronicleStore{
     selectedChronicle: Chronicle | undefined = undefined;
     loading = false;
     loadingInitial = true;
+    selectedOutpostId:number =0;
 
     constructor(){
         makeAutoObservable(this);
@@ -21,6 +22,10 @@ export default class ChronicleStore{
         this.loadingInitial=state;
     }
 
+    setSelectedOutpostId(outpostId:number){
+        this.selectedOutpostId=outpostId;
+    }
+
     checkOutpostId(outpostId:number){
         let chronicles = Array.from(this.chronicleRegistry.values());
         if(chronicles.filter(o => o.outpostId === outpostId))
@@ -28,6 +33,39 @@ export default class ChronicleStore{
     }
 
     deleteChronicle(outpostId:number,id:number){
+
+    }
+
+
+    loadChronicle = async (outpostId:number,id:number) => {
+        let chronicle = this.chronicleRegistry.get(id);
+        
+        // console.log(`Taki obiekt w promise istnieje id:${id}, outpostId: ${chronicle!.name}`);
+        this.setSelectedOutpostId(outpostId);
+        //EDIT zwaraca dane  do forma
+        if(chronicle){
+            this.selectedChronicle = chronicle;
+            return chronicle;
+        }
+        else {
+            this.loadingInitial = true;
+            try{
+                console.log('jestem w else');
+
+                chronicle = await agent.Chronicles.details(id,this.selectedOutpostId);
+                chronicle.publicationDate = chronicle.publicationDate.split('T')[0];
+
+                this.chronicleRegistry.set(chronicle.id,chronicle);
+                this.selectedChronicle = chronicle;
+                this.setLoadingInitial(false);
+                return chronicle;
+            }
+            catch(e)
+            {
+                console.log(e);
+                this.setLoadingInitial(false);
+            }
+        }
 
     }
 
@@ -41,7 +79,9 @@ export default class ChronicleStore{
                     this.setChronicle(chronicle);
                 }
                 );
+            this.setSelectedOutpostId(outpostId)
             this.setLoadingInitial(false);
+
         }
         catch(error){
             console.log(error);
