@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable ,runInAction} from "mobx";
 import agent from "../api/agent";
 import Chronicle from "../models/chronicle";
 
@@ -32,9 +32,6 @@ export default class ChronicleStore{
         return true;        
     }
 
-    deleteChronicle(outpostId:number,id:number){
-
-    }
 
 
     loadChronicle = async (outpostId:number,id:number) => {
@@ -50,7 +47,7 @@ export default class ChronicleStore{
         else {
             this.loadingInitial = true;
             try{
-                console.log('jestem w else');
+                // console.log('jestem w else');
 
                 chronicle = await agent.Chronicles.details(id,this.selectedOutpostId);
                 chronicle.publicationDate = chronicle.publicationDate.split('T')[0];
@@ -94,5 +91,62 @@ export default class ChronicleStore{
        this.chronicleRegistry.set(chronicle.id,chronicle)
     }
 
+
+    deleteChronicle = async (id: number,outpostId:number)=>{
+        this.loading=true;
+        try{
+             await agent.Chronicles.delete(outpostId, id);
+             runInAction(()=>{
+                this.chronicleRegistry.delete(id);
+                this.loading=false;
+            });
+        }
+        catch(e)
+        {
+            console.log(e);
+            runInAction(() => {
+                this.loading=false;
+            });
+        }
+    }
+
+    updateChronicle = async(chronicle: Chronicle,outpostId:number, id:number)=>{
+         this.loading=true;
+        try{
+            await agent.Chronicles.update(chronicle,outpostId,id);
+            runInAction(()=>{
+                this.chronicleRegistry.set(chronicle.id,chronicle);
+                this.selectedChronicle=chronicle;
+                // this.editMode=false;
+                this.loading=false;
+            });
+        }
+        catch(e)
+        {
+            console.log(e);
+            runInAction(() => {
+                this.loading=false;
+            });
+        }
+    };
+    createChronicle = async (chronicle: Chronicle,outpostId:number)=>{
+        this.loading =true;
+        try{
+            //@TODO PROBLEM Z OSTATNIM IDEKSEM PRZED ZALADOWANIEM ew. przerobić na UUID z id z backendu (przerobic backend na przyjmowanie string id)
+            await agent.Chronicles.create(chronicle,outpostId);
+            runInAction(() => {
+                this.selectedChronicle= chronicle;
+                this.setChronicle(chronicle);
+                this.loading=false;
+            });
+        }
+        catch(e){
+            runInAction(() => {
+                this.loading=false;
+            });
+            
+        }
+
+    }
     
 }

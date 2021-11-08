@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Button, Item, Label } from "semantic-ui-react";
 import Chronicle from "../../../models/chronicle";
 
@@ -16,8 +16,9 @@ interface Props{
 export default observer( 
 function ChroniclesItem({chronicle,target,chronicleDelete}:Props)
 {
+  const { chronicleId } = useParams<{ chronicleId: string }>();
 
-  console.log(chronicle.id);
+  // console.log(chronicle.id);
 return(
 <Item >
             <Item.Image
@@ -31,7 +32,7 @@ return(
                 <Label className="date">{chronicle.publicationDate}</Label>
               </Item.Meta>
               <Item.Description>
-                {chronicle.description.slice(0, 10)}...
+                {/* {chronicle.description.slice(0, 10)}... */} ...
               </Item.Description>
             </Item.Content>
             <Item.Extra>
@@ -49,7 +50,7 @@ return(
                 />
                 <Button
                   as={Link}
-                  to={`/outposts/${chronicle.outpostId}`}
+                  to={`/outposts/${chronicle.outpostId}/editChronicle/${chronicle.id}`}
                   floated="right"
                   content="Edycja"
                   color="red"

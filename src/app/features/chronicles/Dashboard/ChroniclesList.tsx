@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent, useState } from "react";
 import { useParams } from "react-router";
 import {
+  Button,
   Item,
   Segment,
 } from "semantic-ui-react";
@@ -13,7 +14,7 @@ export default observer(function ChroniclesList() {
   const { chronicleStore } = useStore();
   const { chronicles, deleteChronicle,loadingInitial } = chronicleStore;
 
-  const { chronicleId } = useParams<{ chronicleId: string }>();
+  const { outpostId } = useParams<{ outpostId: string }>();
 
   const [target, setTarget] = useState(0);
 
@@ -21,7 +22,7 @@ export default observer(function ChroniclesList() {
   {
     let currentButton = parseInt(event.currentTarget.id);
     setTarget(currentButton);
-    deleteChronicle(parseInt(chronicleId), id);
+    deleteChronicle(id,parseInt(outpostId));
   }
 
 

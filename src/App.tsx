@@ -12,10 +12,10 @@ import OutpostForm from './app/features/outposts/form/OutpostForm';
 import OutpostDetails from './app/features/outposts/details/OutpostDetails';
 import ChroniclesDashBoard from './app/features/chronicles/dashboard/ChroniclesDashboard';
 import ChroniclesDetails from './app/features/chronicles/dashboard/ChroniclesDetails';
+import ChronicleForm from './app/features/chronicles/dashboard/ChronicleForm';
 
 function App() {
   const location = useLocation();
-//const chronicleLocation = useLocation();
   
   return (
     <>
@@ -27,8 +27,12 @@ function App() {
           
           <Route key={location.key} exact path={["/editOutpost/:id","/outpostCreate"]} component={OutpostForm}></Route>
           
-          <Route exact path={"/outposts/:id/chronicle"} component={ChroniclesDashBoard}></Route>
-          <Route  path={"/outposts/:outpostId/chronicle/:id/details"} component={ChroniclesDetails}></Route>
+          <Route exact path={"/outposts/:outpostId/chronicle"} component={ChroniclesDashBoard}></Route>
+          <Route exact path={"/outposts/:outpostId/chronicle/:id/details"} component={ChroniclesDetails}></Route>
+
+          <Route key={location.key+'1'} 
+          exact path={["/outposts/:outpostId/editChronicle/:id","/outposts/:outpostId/chronicleCreate"]} 
+          component={ChronicleForm}></Route>
         </Container>
     </>
   );

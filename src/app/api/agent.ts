@@ -44,7 +44,7 @@ const Outposts ={
 const Chronicles ={
     list: (outpostId: number) => request.get<Chronicle[]>(`/outpost/${outpostId}/chronicle`),
     details: (id:number,outpostId: number) => request.get<Chronicle>(`/outpost/${outpostId}/chronicle/${id}`),
-    create: (chronicle: Chronicle,outpostId:number, id:number) => request.post<void>(`/outpost/${outpostId}/chronicle/${id}`,chronicle),
+    create: (chronicle: Chronicle,outpostId:number) => request.post<void>(`/outpost/${outpostId}/chronicle`,chronicle),
     update: (chronicle: Chronicle,outpostId:number, id:number) => request.put<void>(`/outpost/${outpostId}/chronicle/${id}`,chronicle),
     delete: (outpostId:number, id:number) => request.delete<void>(`/outpost/${outpostId}/chronicle/${id}`)
 }
