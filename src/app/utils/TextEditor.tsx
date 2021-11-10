@@ -18,7 +18,7 @@ export default function MyEditor({error,editorState,setEditorState}:Props) {
           minHeight: "6em",
           borderRadius: "5px",
           padding:'6',
-          // height: '200px',
+          // height: '400px',
           // overflowY: 'auto'
         },
         editorDanger: {
@@ -38,19 +38,22 @@ export default function MyEditor({error,editorState,setEditorState}:Props) {
         }
       };
       
-// const [editorState, setEditorState] = React.useState(
-//     EditorState.createEmpty()
-//   );
 
+  // const data = JSON.stringify(convertToRaw(editorState.getCurrentContent()));
+  // console.log(data);
+  // const xd ='duzo tekstu';
+  // console.log(xd);
+  // localStorage.setItem(TEXT_EDITOR_ITEM, data);
+  
   const editor = useRef<any>(null);
 
   function focusEditor() {
     editor.current.focus();
   }
 
- useEffect(() => {
-    focusEditor();
-  }, []);
+//  useEffect(() => {
+//     focusEditor();
+//   }, []);
 
 
   const handleToggleClick = (inlineStyle:any) => {
@@ -65,23 +68,20 @@ export default function MyEditor({error,editorState,setEditorState}:Props) {
 
   const handleKeyCommand = (command :any, editorState:any) => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
-
     if (newState) {
       setEditorState(newState);
       return 'handled';
     }
-
     return 'not-handled';
   }
 
-  // const data = JSON.stringify(convertToRaw(editorState.getCurrentContent()));
   const data = convertToRaw(editorState.getCurrentContent());
-  // console.log(data);
-  // const xd ='duzo tekstu';
-  // console.log(xd);
 
-  // localStorage.setItem(TEXT_EDITOR_ITEM, data);
 
+
+
+
+ 
   return (
     <>
       <ToolBar
@@ -89,8 +89,8 @@ export default function MyEditor({error,editorState,setEditorState}:Props) {
         onToggle={handleToggleClick}
         onBlock={handleBlockClick}
       />
-    <div onClick={focusEditor} style={ true ? styles.editor: styles.editorDanger}
-    >
+
+      <div onClick={focusEditor} style={ true ? styles.editor: styles.editorDanger}>
     
       <Editor
         ref={editor}
@@ -98,19 +98,18 @@ export default function MyEditor({error,editorState,setEditorState}:Props) {
         editorState={editorState}
         onChange={editorState => setEditorState(editorState)}
         handleKeyCommand={handleKeyCommand}
-
       />
+
       </div>
-      <Button
-        icon='undo'
-        disabled={editorState.getUndoStack().size <= 0}
-        onMouseDown={() => setEditorState(EditorState.undo(editorState))}>
-      </Button>
-      <Button
-        icon='redo'
-        disabled={editorState.getRedoStack().size <= 0}
-        onMouseDown={() => setEditorState(EditorState.redo(editorState))}>
-      </Button>
+      <Button icon='undo' disabled={editorState.getUndoStack().size <= 0}
+              onMouseDown={() => setEditorState(EditorState.undo(editorState))}></Button>
+      <Button icon='redo' disabled={editorState.getRedoStack().size <= 0}
+             onMouseDown={() => setEditorState(EditorState.redo(editorState))}></Button>
       </>
   );
+
+
+
+
+
 }

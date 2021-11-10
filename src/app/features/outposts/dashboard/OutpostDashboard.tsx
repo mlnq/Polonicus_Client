@@ -22,6 +22,7 @@ export default observer(function OutpostDashboard(){
 
     },[outpostRegistry.size,loadOutposts]);
 
+   
 
     if(outpostStore.loadingInitial ) return <LoadingComponent content={"loading Polonicus"}/> 
     return(

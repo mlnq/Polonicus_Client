@@ -36,7 +36,8 @@ export default class OutpostStore{
         let outpost = this.outpostRegistry.get(id);
         //EDIT zwaraca dane  do forma
         if(outpost){
-            console.log(`Taki obiekt w promise istnieje id:${id}, outpostId: ${outpost.name}`);
+            console.log(`Taki obiekt w promise istnieje id:${id}, outpost.name: ${outpost.name}`);
+            outpost.id=id;
             this.selectedOutpost = outpost;
             return outpost;
         }
@@ -67,13 +68,11 @@ export default class OutpostStore{
     createOutpost = async (outpost: Outpost) =>{
         this.loading =true;
         try{
-            //@TODO PROBLEM Z OSTATNIM IDEKSEM PRZED ZALADOWANIEM ew. przerobić na UUID z id z backendu (przerobic backend na przyjmowanie string id)
-            // this.outposts=[];
-            await agent.Outposts.create(outpost);
+            const response = await agent.Outposts.create(outpost);
             runInAction(() => {
-                this.outpostRegistry.set(outpost.id,outpost);
+                outpost.id = response.id;
+                this.outpostRegistry.set(response.id,outpost);
                 this.selectedOutpost = outpost;
-                // this.editMode=false;
                 this.loading=false;
             });
         }

@@ -133,9 +133,12 @@ export default class ChronicleStore{
         this.loading =true;
         try{
             //@TODO PROBLEM Z OSTATNIM IDEKSEM PRZED ZALADOWANIEM ew. przerobić na UUID z id z backendu (przerobic backend na przyjmowanie string id)
-            await agent.Chronicles.create(chronicle,outpostId);
+            var response = await agent.Chronicles.create(chronicle,outpostId);
+
             runInAction(() => {
+                chronicle.id = response.id;
                 this.selectedChronicle= chronicle;
+                this.chronicleRegistry.set(chronicle.id,chronicle);
                 this.setChronicle(chronicle);
                 this.loading=false;
             });

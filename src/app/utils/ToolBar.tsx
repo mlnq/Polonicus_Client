@@ -35,7 +35,7 @@ return (
           key={key}
           active={currentInlineStyle.has(type.style) ? true: false}
           icon={type.label}
-          onMouseDown={
+          onClick={
             (e:any) => {
             e.preventDefault();
             onToggle(type.style);
@@ -51,7 +51,7 @@ return (
           <Button 
           key={type.label}
           active={currentInlineStyle.has(type.style) ? true: false}
-          onMouseDown={
+          onClick={
             (e:any) => {
             e.preventDefault();
             onBlock(type.style);

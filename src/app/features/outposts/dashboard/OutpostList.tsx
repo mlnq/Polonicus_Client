@@ -15,7 +15,7 @@ export default observer( function OutpostList(){
     
     
     const {outpostStore} = useStore();
-    const {outposts,loading,deleteOutpost} = outpostStore;
+    const {outposts,loading,deleteOutpost,loadOutposts} = outpostStore;
     
     const [target,setTarget] = useState(0);
     
@@ -25,7 +25,7 @@ export default observer( function OutpostList(){
         deleteOutpost(id);
     }
     
-    
+    if(outposts.length === 1)  loadOutposts();
     return (
         <Segment>
             <Item.Group divided>

@@ -52,13 +52,13 @@ export default observer(function ChronicleForm(){
             });
     },[id,loadChronicle])
         
-    const outpostValidationSchema = Yup.object().shape({
+    const chronicleValidationSchema = Yup.object().shape({
         name: Yup.string().required(),
     })
 
     const [editorState, _setEditorState] = React.useState(
         EditorState.createEmpty()
-      );
+    );
     
     function dataStringify(editorState:any)
     {
@@ -71,8 +71,9 @@ export default observer(function ChronicleForm(){
        return {...val,description: dataStringify(desc)}
     }
 
-    function handleFormSubmit(chronicle: Chronicle){
-
+    function handleFormSubmit(val: any){
+        console.log('hejo')
+        var chronicle = prepareData(val,editorState);
         if(!chronicle.id) 
         createChronicle(chronicle,parseInt(outpostId)).then(()=> history.push(`/outposts/${outpostId}/chronicle`))
         else updateChronicle(chronicle,parseInt(outpostId),chronicle.id).then(()=> history.push(`/outposts/${outpostId}/chronicle`))
@@ -84,34 +85,26 @@ export default observer(function ChronicleForm(){
     return(
         <Segment clearing>
             <Formik 
-            validationSchema={outpostValidationSchema} 
-            enableReinitialize 
-            initialValues={chronicle} 
-            onSubmit={val =>console.log(handleFormSubmit(prepareData(val,editorState)))}
+                validationSchema={chronicleValidationSchema} 
+                enableReinitialize 
+                initialValues={chronicle} 
+                onSubmit={val =>handleFormSubmit(val)}
             >
             {({handleSubmit, isValid, dirty, isSubmitting})=>
             (
                 <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
                     <MyFieldInput  placeholder="Nazwa" name="name" label='Nazwa placówki'/> 
-                    {/* <MyFieldInput  placeholder="Opis" name="description" label='Opis'/>  */}
 
                     <TextEditor
-                    editorState={editorState}
-                    setEditorState={_setEditorState}
+                        editorState={editorState}
+                        setEditorState={_setEditorState}
                     />
-
-                    {/* <MyTextArea 
-                    // onChange={setEditorState}
-                    editorState={editorState}
-                    rows={4}  placeholder="Opis" name="description" label='Opis'/> */}
-
-                    {/* <MyFieldInput  placeholder="PublicationDate" name="publicationDate" label='Publication Date'/>  */}
 
                     <ButtonGroup>
                         <Button
-                        disabled={isSubmitting || !dirty || !isValid}
+                       //disabled={isSubmitting || !dirty || !isValid}
                         loading={loading} positive content='Zatwierdź'/>
-                        <Button as={Link} to={`/outposts`} basic color='grey' content='Cofnij'/>
+                        <Button as={Link} to={`/outposts/${outpostId}/chronicle`} basic color='grey' content='Cofnij'/>
                     </ButtonGroup>  
                 </Form>
             )}
