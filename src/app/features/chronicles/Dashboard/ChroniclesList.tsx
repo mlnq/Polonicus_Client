@@ -9,10 +9,11 @@ import {
 import LoadingComponent from "../../../layout/LoadingComponent";
 import { useStore } from "../../../stores/store";
 import ChroniclesItem from "./ChroniclesItem";
+import ChroniclesVisitorItem from "./ChroniclesVisitorItem";
 
 export default observer(function ChroniclesList() {
   const { chronicleStore } = useStore();
-  const { chronicles, deleteChronicle,loadingInitial } = chronicleStore;
+  const { chronicles, deleteChronicle,loadingInitial,allChronicles } = chronicleStore;
 
   const { outpostId } = useParams<{ outpostId: string }>();
 
@@ -33,13 +34,25 @@ export default observer(function ChroniclesList() {
   if (chronicles.length === 0)
     return <div>"placówka nie posiada jeszcze zadnych wpisów"</div>;
   return (
-    <Segment>
-      <Item.Group divided>
-        {chronicles.map((chronicle) => (
+    <Segment >
+      <Item.Group divided horizontal>
+        {
+        allChronicles?
+        (
+          chronicles.map((chronicle) => (
+          <ChroniclesVisitorItem key={chronicle.id} chronicle={chronicle} target={target}
+          chronicleDelete={handleChronicleDelete}
+          />))
+        )
+        :
+        (
+        chronicles.map((chronicle) => (
           <ChroniclesItem key={chronicle.id} chronicle={chronicle} target={target}
           chronicleDelete={handleChronicleDelete}
-          />
-        ))}
+          />))
+        )
+          
+        }
       </Item.Group>
     </Segment>
   );

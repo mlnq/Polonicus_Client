@@ -3,12 +3,12 @@ import { observer } from "mobx-react-lite";
 import React, { ChangeEvent,useEffect,useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { Button, ButtonGroup, FormField, Segment } from "semantic-ui-react";
-import LoadingComponent from "../../../layout/LoadingComponent";
 import { Outpost } from "../../../models/outpost";
 import { useStore } from "../../../stores/store";
 import * as Yup from 'yup';
 import MyFieldInput from "../../../utils/MyFieldInput";
 import MyFieldTextArea from "../../../utils/MyFieldTextArea";
+import LoadingComponent from "../../../layout/LoadingComponent";
 
 export default observer( function OutpostForm(){
 

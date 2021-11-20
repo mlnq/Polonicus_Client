@@ -3,6 +3,7 @@ import React, { SyntheticEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button, Item, Label } from "semantic-ui-react";
 import Chronicle from "../../../models/chronicle";
+import { useStore } from "../../../stores/store";
 
 
 
@@ -17,8 +18,14 @@ export default observer(
 function ChroniclesItem({chronicle,target,chronicleDelete}:Props)
 {
   const { chronicleId } = useParams<{ chronicleId: string }>();
-
+  const {userStore} =useStore();
+  const {isLogged}=userStore;
   // console.log(chronicle.id);
+
+  let DateString = ('0' + chronicle.publicationDate.getDate()).slice(-2) + '/'
++ ('0' + (chronicle.publicationDate.getMonth()+1)).slice(-2) + '/'
++ chronicle.publicationDate.getFullYear();
+
 return(
 <Item >
             <Item.Image
@@ -29,7 +36,7 @@ return(
             <Item.Content>
               <Item.Header>{chronicle.name}</Item.Header>
               <Item.Meta>
-                <Label className="date">{chronicle.publicationDate}</Label>
+                <Label className="date">{DateString}</Label>
               </Item.Meta>
               <Item.Description>
                 {/* {chronicle.description.slice(0, 10)}... */} ...
@@ -37,17 +44,26 @@ return(
             </Item.Content>
             <Item.Extra>
               <Button.Group vertical color="red" floated="right">
-                <Button
-                  id={chronicle.id}
-                  loading={target === chronicle.id}
-                  onClick={(event) =>{
-                    chronicleDelete(event, chronicle.id);
-                    }
-                  }
-                  floated="right"
-                  content="Usuń"
-                  icon="trash"
-                />
+                
+                {
+                  //sprawdzenie czy id jest jego z kroniką zgodne 
+                  //czy ma permisje i
+                  //czy jest zalogowany
+                  isLogged? (
+                    <Button
+                      id={chronicle.id}
+                      loading={target === chronicle.id}
+                      onClick={(event) =>{
+                        chronicleDelete(event, chronicle.id);
+                        }
+                      }
+                      floated="right"
+                      content="Usuń"
+                      icon="trash"
+                    />)
+                  :
+                  null
+                }
                 <Button
                   as={Link}
                   to={`/outposts/${chronicle.outpostId}/editChronicle/${chronicle.id}`}

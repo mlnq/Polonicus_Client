@@ -1,6 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 import Chronicle from "../models/chronicle";
 import { Outpost } from "../models/outpost";
+import User from "../models/user";
+import UserCreds from "../models/userCreds";
+import UserRegister from "../models/userRegister";
+import { store } from "../stores/store";
 
 
 //axios jest za szybki temu tworze fake delay
@@ -22,6 +26,19 @@ axios.interceptors.response.use( async response=>{
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
+axios.interceptors.request.use(config =>{
+    const token = store.utilsStore.token;
+    console.log(token);
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`
+    }
+    return config;
+}, 
+error => {
+    console.log(error);
+    Promise.reject(error)
+});
+
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 
 
@@ -42,16 +59,23 @@ const Outposts ={
 }
 
 const Chronicles ={
+    getAll: () => request.get<Chronicle[]>(`/chronicles`),
     list: (outpostId: number) => request.get<Chronicle[]>(`/outpost/${outpostId}/chronicle`),
     details: (id:number,outpostId: number) => request.get<Chronicle>(`/outpost/${outpostId}/chronicle/${id}`),
     create: (chronicle: Chronicle,outpostId:number) => request.post<{id:number}>(`/outpost/${outpostId}/chronicle`,chronicle),
     update: (chronicle: Chronicle,outpostId:number, id:number) => request.put<void>(`/outpost/${outpostId}/chronicle/${id}`,chronicle),
     delete: (outpostId:number, id:number) => request.delete<void>(`/outpost/${outpostId}/chronicle/${id}`)
 }
+const Account ={
+    login: (user: UserCreds) => request.post<User>('/account/login',user),
+    register: (user: UserRegister) => request.post<void>('/account/register',user),
+    getUser: () => request.get<User>('/account')
+}
 
 const agent ={
     Outposts,
-    Chronicles
+    Chronicles,
+    Account
 }
 
 export default agent;

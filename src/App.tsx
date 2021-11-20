@@ -1,4 +1,4 @@
-import styles from './App.module.css';
+import  './App.css';
 import  { useEffect } from 'react';
 import {  Container } from 'semantic-ui-react';
 import NavBar from './app/layout/NavBar';
@@ -11,28 +11,62 @@ import HomePage from './app/features/home/HomePage';
 import OutpostForm from './app/features/outposts/form/OutpostForm';
 import OutpostDetails from './app/features/outposts/details/OutpostDetails';
 import ChroniclesDashBoard from './app/features/chronicles/dashboard/ChroniclesDashboard';
-import ChroniclesDetails from './app/features/chronicles/dashboard/ChroniclesDetails';
-import ChronicleForm from './app/features/chronicles/dashboard/ChronicleForm';
+import ChroniclesVisitorDashBoard from './app/features/chronicles/dashboard/ChroniclesVisitorDashboard';
+import ChroniclesDetails from './app/features/chronicles/details/ChroniclesDetails';
+import ChronicleForm from './app/features/chronicles/form/ChronicleForm';
+import OutpostMap from './app/features/mapOutposts/OutpostMap';
+import LoginForm from './app/features/user/LoginForm';
+import RegisterForm from './app/features/user/RegisterForm';
+import AccountDetails from './app/features/user/AccountDetails';
 
 function App() {
   const location = useLocation();
   
+  // useEffect(()=>{
+  //   navigator.geolocation.getCurrentPosition(function(position) {
+  //     console.log("Latitude is :", position.coords.latitude);
+  //     console.log("Longitude is :", position.coords.longitude);
+  //   });
+  // });
+  const {userStore,utilsStore} = useStore();
+
+  useEffect(()=>{
+    if(utilsStore.token)
+        {
+          userStore.getUser().finally(()=>utilsStore.setLoadedAcc())
+        }
+        else utilsStore.setLoadedAcc();
+  },[utilsStore,userStore])
+
+  if(!utilsStore.accountLoading) return <LoadingComponent content="Loading account..." />
+
   return (
     <>
         <NavBar/>
         <Container style={{marginTop: '7em'}}>
+          {/* <Route exact path="/" component={OutpostMap}></Route> */}
           <Route exact path="/" component={HomePage}></Route>
+
+
+{/* PLACÓWKI */}
           <Route exact path="/outposts" component={OutpostDashboard}></Route>
           <Route exact path="/outposts/:id" component={OutpostDetails}></Route>
           
           <Route key={location.key} exact path={["/editOutpost/:id","/outpostCreate"]} component={OutpostForm}></Route>
           
+{/* KRONIKI */}
+          <Route exact path={"/chronicles"} component={ChroniclesVisitorDashBoard}></Route>
           <Route exact path={"/outposts/:outpostId/chronicle"} component={ChroniclesDashBoard}></Route>
           <Route exact path={"/outposts/:outpostId/chronicle/:id/details"} component={ChroniclesDetails}></Route>
 
           <Route key={location.key+'1'} 
           exact path={["/outposts/:outpostId/editChronicle/:id","/outposts/:outpostId/chronicleCreate"]} 
           component={ChronicleForm}></Route>
+{/* USER */}
+          <Route exact path={"/accountDetails"} component={AccountDetails}></Route>
+          <Route exact path={"/login"} component={LoginForm}></Route>
+          <Route exact path={"/register"} component={RegisterForm}></Route>
+
         </Container>
     </>
   );

@@ -10,5 +10,7 @@ export interface Outpost{
     street: string;
     postalCode: string;
     chronicles?: (Chronicles)[] | null;
+    userId?:number;
+
   }
 

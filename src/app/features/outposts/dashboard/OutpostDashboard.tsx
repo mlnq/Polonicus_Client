@@ -1,19 +1,22 @@
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from "react";
 import { useParams } from 'react-router';
-import { Grid} from "semantic-ui-react";
-import LoadingComponent from '../../../layout/LoadingComponent';
+import { Link } from 'react-router-dom';
+import { Button, Grid} from "semantic-ui-react";
 import { Outpost } from "../../../models/outpost";
 import { useStore } from "../../../stores/store";
 import OutpostDetails from "../details/OutpostDetails";
+import OutpostFilter from '../filter/OutpostFilter';
 import OutpostForm from "../form/OutpostForm";
 import OutpostList from "./OutpostList";
+import LoadingComponent from '../../../layout/LoadingComponent';
 
 
 export default observer(function OutpostDashboard(){
 
-    const {outpostStore} = useStore();   
+    const {outpostStore,userStore} = useStore();   
     const {outpostRegistry,loadOutposts} = outpostStore;
+    const {isLogged}=userStore;
 
 
   
@@ -31,7 +34,15 @@ export default observer(function OutpostDashboard(){
                 <OutpostList />
             </Grid.Column>
             <Grid.Column width='4'>
-                whatever man
+
+                {
+                    isLogged?(
+                        <Button as={Link} to="/outpostCreate" name="outpostCreate" negative content='Stwórz Placówke'/>
+                    ):null
+                }
+                 <OutpostFilter/>
+
+
             </Grid.Column>
         </Grid>
     );

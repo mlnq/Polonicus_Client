@@ -3,7 +3,6 @@ import {
   Editor,
   EditorState,
   RichUtils,
-  AtomicBlockUtils,
   DraftEditorCommand,
   convertToRaw,
   convertFromRaw

@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from "react";
 import { render } from "@testing-library/react";
 import { Formik } from "formik";
-import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Button, ButtonGroup, Form, Segment } from "semantic-ui-react";
 import LoadingComponent from "../../../layout/LoadingComponent";
@@ -28,7 +28,8 @@ export default observer(function ChronicleForm(){
         id:0,
         name: '',
         // description: '',
-        publicationDate: new Date().toISOString().split('T')[0],
+        // publicationDate: new Date().toISOString().split('T')[0],
+        publicationDate: new Date(),
     })
 
     useEffect(()=>{
@@ -72,11 +73,16 @@ export default observer(function ChronicleForm(){
     }
 
     function handleFormSubmit(val: any){
-        console.log('hejo')
         var chronicle = prepareData(val,editorState);
         if(!chronicle.id) 
-        createChronicle(chronicle,parseInt(outpostId)).then(()=> history.push(`/outposts/${outpostId}/chronicle`))
-        else updateChronicle(chronicle,parseInt(outpostId),chronicle.id).then(()=> history.push(`/outposts/${outpostId}/chronicle`))
+        {
+            createChronicle(chronicle,parseInt(outpostId)).then(()=> history.push(`/outposts/${outpostId}/chronicle`));
+        }
+        else 
+        {
+            chronicle.publicationDate= new Date();
+            updateChronicle(chronicle,parseInt(outpostId),chronicle.id).then(()=> history.push(`/outposts/${outpostId}/chronicle`))
+        }
     }
 
 

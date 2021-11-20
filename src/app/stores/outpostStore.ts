@@ -70,6 +70,7 @@ export default class OutpostStore{
         try{
             const response = await agent.Outposts.create(outpost);
             runInAction(() => {
+                outpost.userId= 4;
                 outpost.id = response.id;
                 this.outpostRegistry.set(response.id,outpost);
                 this.selectedOutpost = outpost;

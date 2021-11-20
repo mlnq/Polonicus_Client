@@ -8,7 +8,8 @@ export default class ChronicleStore{
     selectedChronicle: Chronicle | undefined = undefined;
     loading = false;
     loadingInitial = true;
-    selectedOutpostId:number =0;
+    selectedOutpostId:number = 0;
+    allChronicles= false;
 
     constructor(){
         makeAutoObservable(this);
@@ -28,31 +29,37 @@ export default class ChronicleStore{
 
     checkOutpostId(outpostId:number){
         let chronicles = Array.from(this.chronicleRegistry.values());
-        if(chronicles.filter(o => o.outpostId === outpostId))
-        return true;        
+        if(chronicles.filter(o => o.outpostId !== outpostId))
+        return false;        
     }
 
-
+    clearChronicle=()=>{
+        this.chronicleRegistry.clear();
+    }
 
     loadChronicle = async (outpostId:number,id:number) => {
         let chronicle = this.chronicleRegistry.get(id);
         
         // console.log(`Taki obiekt w promise istnieje id:${id}, outpostId: ${chronicle!.name}`);
-        this.setSelectedOutpostId(outpostId);
         //EDIT zwaraca dane  do forma
-        if(chronicle){
+        if(chronicle && outpostId==this.selectedOutpostId){
+            console.log('laduje no')
             this.selectedChronicle = chronicle;
             return chronicle;
         }
         else {
             this.loadingInitial = true;
             try{
-                // console.log('jestem w else');
+                this.setSelectedOutpostId(outpostId);
+                console.log("KRAWCZYK KRÓL:"+chronicle);
+                chronicle = await agent.Chronicles.details(id,outpostId);
+                console.log("KRAWCZYK KRÓL:"+chronicle);
+                
+                //chronicle.publicationDate = chronicle.publicationDate.split('T')[0];
 
-                chronicle = await agent.Chronicles.details(id,this.selectedOutpostId);
-                chronicle.publicationDate = chronicle.publicationDate.split('T')[0];
-
+                chronicle.publicationDate = new Date(chronicle.publicationDate!);
                 this.chronicleRegistry.set(chronicle.id,chronicle);
+
                 this.selectedChronicle = chronicle;
                 this.setLoadingInitial(false);
                 return chronicle;
@@ -65,9 +72,27 @@ export default class ChronicleStore{
         }
 
     }
+    getAllChronicles = async () =>{
+        this.loadingInitial = true;
+        try{
+            const chronicleLoad = await agent.Chronicles.getAll();
+            chronicleLoad.forEach(chronicle => {
+                this.setChronicle(chronicle);
+            }
+            );
+            
+            runInAction(()=>this.allChronicles=true) ;
+            this.setLoadingInitial(false);
+        }
+        catch(error){
+            console.log(error);
+            this.setLoadingInitial(false);
+        }
+    }
 
     loadChronicles = async (outpostId:number) =>{
         this.loadingInitial = true;
+        ///yyy sprawdzenie id 1 elementu.. ale jakies dziwne bardzo xd
         if(! this.checkOutpostId(outpostId)) this.chronicleRegistry.clear();
         try{
             const chronicleLoad = await agent.Chronicles.list(outpostId);
@@ -76,6 +101,8 @@ export default class ChronicleStore{
                     this.setChronicle(chronicle);
                 }
                 );
+            runInAction(()=>this.allChronicles=false) ;
+
             this.setSelectedOutpostId(outpostId)
             this.setLoadingInitial(false);
 
@@ -87,8 +114,9 @@ export default class ChronicleStore{
     }
 
     setChronicle =(chronicle:Chronicle)=>{
-       chronicle.publicationDate = chronicle.publicationDate.split('T')[0];
-       this.chronicleRegistry.set(chronicle.id,chronicle)
+      //chronicle.publicationDate = chronicle.publicationDate.split('T')[0];
+      chronicle.publicationDate = new Date(chronicle.publicationDate!)
+      this.chronicleRegistry.set(chronicle.id,chronicle)
     }
 
 

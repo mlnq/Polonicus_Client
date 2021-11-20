@@ -11,14 +11,24 @@ import ChroniclesList from "./ChroniclesList";
 export default observer(function ChroniclesDashBoard(){
 
     const {chronicleStore} = useStore(); 
-    const {loadChronicles} = chronicleStore;
+    const {loadChronicles,selectedOutpostId,clearChronicle} = chronicleStore;
     const {outpostId} = useParams<{outpostId: string}>();
 
     useEffect(()=>{
-        if(outpostId) 
-        loadChronicles(parseInt(outpostId)).then(
-            () =>console.log(outpostId));
-    },[loadChronicles,outpostId])
+        if(outpostId)
+        {
+            if(parseInt(outpostId) === selectedOutpostId)
+            {
+                loadChronicles(parseInt(outpostId)).then(() =>console.log(outpostId));
+            }
+            else
+            {
+                clearChronicle();
+                loadChronicles(parseInt(outpostId)).then(() =>console.log(outpostId));
+            }
+
+        } 
+    },[loadChronicles,clearChronicle,outpostId])
 
     if(chronicleStore.loadingInitial ) return <LoadingComponent content={"loading Polonicus"}/> 
     return(
@@ -29,7 +39,6 @@ export default observer(function ChroniclesDashBoard(){
             <Grid.Column width='4'>
                 {/* chronicles options */}
                 <Button primary as={Link} to={`/outposts/${outpostId}/chronicleCreate`} >Dodaj Kronike</Button>
-
             </Grid.Column>
         </Grid>
     );
