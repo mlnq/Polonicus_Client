@@ -5,6 +5,7 @@ import {
   Button,
   Item,
   Segment,
+  SegmentGroup,
 } from "semantic-ui-react";
 import LoadingComponent from "../../../layout/LoadingComponent";
 import { useStore } from "../../../stores/store";
@@ -34,7 +35,7 @@ export default observer(function ChroniclesList() {
   if (chronicles.length === 0)
     return <div>"placówka nie posiada jeszcze zadnych wpisów"</div>;
   return (
-    <Segment >
+    <Segment>
       <Item.Group divided horizontal>
         {
         allChronicles?

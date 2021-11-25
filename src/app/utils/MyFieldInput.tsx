@@ -10,7 +10,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-export default function MyField(props: Props) {
+export default function MyFieldInput(props: Props) {
   const [field, meta] = useField(props.name);
 
   return (
@@ -25,3 +25,5 @@ export default function MyField(props: Props) {
     </Form.Field>
   );
 }
+
+

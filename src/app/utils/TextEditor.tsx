@@ -101,11 +101,12 @@ export default function MyEditor({error,editorState,setEditorState}:Props) {
       />
 
       </div>
-      <Button icon='undo' disabled={editorState.getUndoStack().size <= 0}
+      {/* <Button icon='undo' disabled={editorState.getUndoStack().size <= 0}
               onMouseDown={() => setEditorState(EditorState.undo(editorState))}></Button>
       <Button icon='redo' disabled={editorState.getRedoStack().size <= 0}
              onMouseDown={() => setEditorState(EditorState.redo(editorState))}></Button>
-      </>
+      */}
+      </> 
   );
 
 

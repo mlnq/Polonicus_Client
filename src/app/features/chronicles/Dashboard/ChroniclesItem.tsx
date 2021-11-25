@@ -20,7 +20,6 @@ function ChroniclesItem({chronicle,target,chronicleDelete}:Props)
   const { chronicleId } = useParams<{ chronicleId: string }>();
   const {userStore} =useStore();
   const {isLogged}=userStore;
-  // console.log(chronicle.id);
 
   let DateString = ('0' + chronicle.publicationDate.getDate()).slice(-2) + '/'
 + ('0' + (chronicle.publicationDate.getMonth()+1)).slice(-2) + '/'
@@ -43,7 +42,7 @@ return(
               </Item.Description>
             </Item.Content>
             <Item.Extra>
-              <Button.Group vertical color="red" floated="right">
+              <Button.Group vertical color='violet' floated="right">
                 
                 {
                   //sprawdzenie czy id jest jego z kroniką zgodne 

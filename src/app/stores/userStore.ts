@@ -8,10 +8,30 @@ import UserRegister from "../models/userRegister";
 
 export default class UserStore{
 
-    user: User | null = null;
+    private user: User | null = null;
 
     constructor(){
         makeAutoObservable(this);
+    }
+
+    get accountDetails()
+    {
+        return this.user;
+    }
+
+    get anotherUserLogged()
+    {
+        if( window.localStorage.jwt === this.user?.token)
+        {
+            console.log(window.localStorage.jwt);
+            console.log(this.user?.token);
+            console.log('tokeny się nie różnią')
+            return false;
+        }
+       
+            console.log('tokeny się różnią')
+            return true;
+       
     }
 
     get isLogged()
@@ -61,14 +81,14 @@ export default class UserStore{
 
      getUser = async() =>{
         try{
-            console.log('szukam Usera na podstawie CLAIMA');
+            // console.log('szukam Usera na podstawie CLAIMA');
 
             let user = await agent.Account.getUser();
 
             runInAction(() =>
             {
                 this.user=user;
-                console.log(user.dateOfBirth);
+                // console.log(user.dateOfBirth);
                 this.user.dateOfBirth = new Date(user.dateOfBirth!);
             });
 

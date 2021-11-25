@@ -4,7 +4,7 @@ import Chronicle from "../models/chronicle";
 
 export default class ChronicleStore{
 
-    chronicleRegistry = new Map<number,Chronicle>();
+    chronicleRegistry: Map<number,Chronicle>= new Map<number,Chronicle>();
     selectedChronicle: Chronicle | undefined = undefined;
     loading = false;
     loadingInitial = true;
@@ -18,6 +18,35 @@ export default class ChronicleStore{
     get chronicles() {
         return Array.from(this.chronicleRegistry.values()); 
     }
+
+    sortChroniclesByDate(){
+        let array = Array.from(this.chronicleRegistry.values());
+        array.sort(function(a:any,b:any){
+            return b.publicationDate - a.publicationDate;
+        });
+        
+        this.chronicleRegistry.clear(); 
+
+        array.forEach(
+            chronicle =>{
+               this.setChronicle(chronicle);
+            }
+        );
+    }
+    sortChroniclesByName(){
+        let array = Array.from(this.chronicleRegistry.values());
+        array.sort((a, b) => a.name.localeCompare(b.name) );
+
+        this.chronicleRegistry.clear(); 
+
+        array.forEach(
+            chronicle =>{
+               this.setChronicle(chronicle);
+            }
+        );
+    }
+
+
 
     setLoadingInitial = (state:boolean) => {
         this.loadingInitial=state;
@@ -55,10 +84,7 @@ export default class ChronicleStore{
                 chronicle = await agent.Chronicles.details(id,outpostId);
                 console.log("KRAWCZYK KRÓL:"+chronicle);
                 
-                //chronicle.publicationDate = chronicle.publicationDate.split('T')[0];
-
-                chronicle.publicationDate = new Date(chronicle.publicationDate!);
-                this.chronicleRegistry.set(chronicle.id,chronicle);
+                this.setChronicle(chronicle);
 
                 this.selectedChronicle = chronicle;
                 this.setLoadingInitial(false);
@@ -74,6 +100,7 @@ export default class ChronicleStore{
     }
     getAllChronicles = async () =>{
         this.loadingInitial = true;
+
         try{
             const chronicleLoad = await agent.Chronicles.getAll();
             chronicleLoad.forEach(chronicle => {
@@ -114,11 +141,9 @@ export default class ChronicleStore{
     }
 
     setChronicle =(chronicle:Chronicle)=>{
-      //chronicle.publicationDate = chronicle.publicationDate.split('T')[0];
       chronicle.publicationDate = new Date(chronicle.publicationDate!)
       this.chronicleRegistry.set(chronicle.id,chronicle)
     }
-
 
     deleteChronicle = async (id: number,outpostId:number)=>{
         this.loading=true;
@@ -141,11 +166,11 @@ export default class ChronicleStore{
     updateChronicle = async(chronicle: Chronicle,outpostId:number, id:number)=>{
          this.loading=true;
         try{
+
             await agent.Chronicles.update(chronicle,outpostId,id);
             runInAction(()=>{
                 this.chronicleRegistry.set(chronicle.id,chronicle);
                 this.selectedChronicle=chronicle;
-                // this.editMode=false;
                 this.loading=false;
             });
         }
@@ -161,6 +186,7 @@ export default class ChronicleStore{
         this.loading =true;
         try{
             //@TODO PROBLEM Z OSTATNIM IDEKSEM PRZED ZALADOWANIEM ew. przerobić na UUID z id z backendu (przerobic backend na przyjmowanie string id)
+
             var response = await agent.Chronicles.create(chronicle,outpostId);
 
             runInAction(() => {

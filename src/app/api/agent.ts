@@ -28,7 +28,7 @@ axios.defaults.baseURL = "http://localhost:5000/api";
 
 axios.interceptors.request.use(config =>{
     const token = store.utilsStore.token;
-    console.log(token);
+    if (token) console.log('Token:'+token);
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
     }
@@ -51,6 +51,7 @@ const request = {
 }
 
 const Outposts ={
+    getAll: () => request.get<Outpost[]>('/outpost/all'),
     list: () => request.get<Outpost[]>('/outpost'),
     details: (id:number) => request.get<Outpost>(`/outpost/${id}`),
     create: (outpost: Outpost) => request.post<{id:number}>(`/outpost`,outpost),

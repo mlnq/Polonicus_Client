@@ -7,7 +7,7 @@ import { useStore } from "../../stores/store";
 export default observer (function AccountDetails()
 {
     const {userStore}=useStore();
-    const {isLogged, user,getAge} = userStore;
+    const {isLogged, accountDetails,getAge} = userStore;
 
     useEffect(
         ()=>{
@@ -23,18 +23,18 @@ export default observer (function AccountDetails()
         <Header as="h2">Szczegóły konta</Header>
         <Card>
             <Card.Content>
-            <Card.Header>{user!.firstName} {user!.lastName}</Card.Header>
+            <Card.Header>{accountDetails!.firstName} {accountDetails!.lastName}</Card.Header>
             <Card.Meta>
                 Wiek: {getAge()}
             </Card.Meta>
             <Card.Description>
-                 Adres email:<strong>{user!.email}</strong>
+                 Adres email:<strong>{accountDetails!.email}</strong>
             </Card.Description>
             </Card.Content>
             
             
             <Card.Content extra>
-            Rola: {user?.roleId}
+            Rola: {accountDetails?.roleId}
             </Card.Content>
         </Card>
           {/* <Card fluid>

@@ -6,7 +6,7 @@ import OutpostDashboard from './app/features/outposts/dashboard/OutpostDashboard
 import LoadingComponent from './app/layout/LoadingComponent';
 import { useStore } from './app/stores/store';
 import { observer } from 'mobx-react-lite';
-import { Route, useLocation } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import HomePage from './app/features/home/HomePage';
 import OutpostForm from './app/features/outposts/form/OutpostForm';
 import OutpostDetails from './app/features/outposts/details/OutpostDetails';
@@ -18,6 +18,8 @@ import OutpostMap from './app/features/mapOutposts/OutpostMap';
 import LoginForm from './app/features/user/LoginForm';
 import RegisterForm from './app/features/user/RegisterForm';
 import AccountDetails from './app/features/user/AccountDetails';
+import OutpostMapPanel from './app/features/mapOutposts/OutpostMapPanel';
+import NotFound from './app/features/errors/NotFound';
 
 function App() {
   const location = useLocation();
@@ -41,11 +43,19 @@ function App() {
   if(!utilsStore.accountLoading) return <LoadingComponent content="Loading account..." />
 
   return (
+  <Switch>
+
+{/* USER */}
+     <Route exact path={"/login"} component={LoginForm}></Route>
+     <Route exact path={"/register"} component={RegisterForm}></Route>
+     
+     <Route exact path="/" component={HomePage}></Route>
+
     <>
-        <NavBar/>
-        <Container style={{marginTop: '7em'}}>
-          {/* <Route exact path="/" component={OutpostMap}></Route> */}
-          <Route exact path="/" component={HomePage}></Route>
+        <NavBar />
+        <Container style={{height:'80vh',marginTop:'10vh',marginBottom:'-10vh'}}>
+         <Switch >
+          <Route exact path="/outposts/map" component={OutpostMapPanel}></Route>
 
 
 {/* PLACÓWKI */}
@@ -64,11 +74,17 @@ function App() {
           component={ChronicleForm}></Route>
 {/* USER */}
           <Route exact path={"/accountDetails"} component={AccountDetails}></Route>
-          <Route exact path={"/login"} component={LoginForm}></Route>
-          <Route exact path={"/register"} component={RegisterForm}></Route>
+       
+
+{/* Nie znaleziono ścieżki */}
+          <Route component={NotFound} >
+          </Route>
+          
+          </Switch>
 
         </Container>
     </>
+    </Switch>
   );
 }
 

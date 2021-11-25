@@ -12,5 +12,7 @@ export interface Outpost{
     chronicles?: (Chronicles)[] | null;
     userId?:number;
 
+    coord_latitude?:  string ;
+    coord_longtiude?:  string ;
   }
 

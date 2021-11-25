@@ -17,7 +17,7 @@ import Chronicle from "../../../models/chronicle";
 
 export default observer(function ChronicleForm(){
     
-        const {chronicleStore} = useStore();
+        const {chronicleStore, utilsStore} = useStore();
         const {selectedChronicle,loadChronicle,loading,loadingInitial
         ,createChronicle,updateChronicle} = chronicleStore;
         const {id} = useParams<{id: string}>();
@@ -72,10 +72,14 @@ export default observer(function ChronicleForm(){
        return {...val,description: dataStringify(desc)}
     }
 
+    
+
     function handleFormSubmit(val: any){
-        var chronicle = prepareData(val,editorState);
+        let chronicle = prepareData(val,editorState);
         if(!chronicle.id) 
         {
+            chronicle.publicationDate= new Date();
+            console.log(chronicle.publicationDate)
             createChronicle(chronicle,parseInt(outpostId)).then(()=> history.push(`/outposts/${outpostId}/chronicle`));
         }
         else 

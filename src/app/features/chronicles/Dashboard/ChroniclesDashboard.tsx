@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { Button, Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../layout/LoadingComponent";
 import { useStore } from "../../../stores/store";
+import ChronicleFilter from "../filter/ChronicleFilter";
 import ChroniclesList from "./ChroniclesList";
 
 
@@ -33,12 +34,12 @@ export default observer(function ChroniclesDashBoard(){
     if(chronicleStore.loadingInitial ) return <LoadingComponent content={"loading Polonicus"}/> 
     return(
         <Grid>
+            <Grid.Column width='4'>
+                <Button  fluid as={Link} to={`/outposts/${outpostId}/chronicleCreate`} icon='plus' color='violet' content='Dodaj kronike' />
+                <ChronicleFilter/>
+            </Grid.Column>
             <Grid.Column width='12'>
                 <ChroniclesList />
-            </Grid.Column>
-            <Grid.Column width='4'>
-                {/* chronicles options */}
-                <Button primary as={Link} to={`/outposts/${outpostId}/chronicleCreate`} >Dodaj Kronike</Button>
             </Grid.Column>
         </Grid>
     );

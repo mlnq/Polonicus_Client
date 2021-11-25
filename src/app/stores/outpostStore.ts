@@ -1,6 +1,7 @@
 import {makeAutoObservable, runInAction} from "mobx"
 import agent from "../api/agent";
 import { Outpost } from "../models/outpost";
+import * as Nominatim from "nominatim-browser";
 
 export default class OutpostStore{
 
@@ -8,28 +9,96 @@ export default class OutpostStore{
     selectedOutpost: Outpost | undefined = undefined;
     loading = false;
     loadingInitial: Boolean|undefined = undefined;
+    allOutposts:Boolean|undefined = undefined;
 
     constructor(){
         makeAutoObservable(this);
     }
-
+    
+    
     get outposts() {
         return Array.from(this.outpostRegistry.values());
     }
 
-    loadOutposts = async () =>{
-        this.loadingInitial = true;
+    public async getLongLat(outpost:Outpost){
+    
+        console.log(outpost.city);
+        let response = await Nominatim.geocode({
+            city: outpost.city,
+            country: outpost.street,
+            // street: outpost.street,
+            // postalcode: outpost.postalCode,
+            addressdetails: true,
+        })
+        console.log(response);
+        console.log(response[0]);
+        // return [parseFloat(response[0]['lat']),parseFloat(response[0]['lon'])];
+        return response[0];
+    }
+    createOutpost = async (outpost: Outpost) =>{
+        this.loading =true;
         try{
-            const outpostsLoad = await agent.Outposts.list();
+            const longLat:any =await this.getLongLat(outpost).then();
+            console.log(parseFloat(longLat['lat']));
+            console.log(parseFloat(longLat['lon']));
+
+            outpost.coord_latitude=longLat['lat'];
+            outpost.coord_longtiude=longLat['lon'];
+
+            const response = await agent.Outposts.create(outpost);
+            runInAction(()=>this.allOutposts=false);
+
+            runInAction(() => {
+                outpost.userId= 4;
+                outpost.id = response.id;
+                this.outpostRegistry.set(response.id,outpost);
+                this.selectedOutpost = outpost;
+                this.loading=false;
+            });
+        }
+        catch(e){
+            runInAction(() => {
+                this.loading=false;
+            });
+            
+        }
+    }
+    loadAllOutposts = async () =>{
+        this.setLoadingInitial(true);
+        try{
+            runInAction(()=>this.allOutposts=true) ;
+            console.log(this.allOutposts)
+
+            const outpostsLoad = await agent.Outposts.getAll();
             outpostsLoad.forEach(outpost => 
                 this.outpostRegistry.set(outpost.id,outpost)
             );
+            console.log(outpostsLoad)
+
             this.setLoadingInitial(false);
         }
         catch(error){
             console.log(error);
             this.setLoadingInitial(false);
         }
+    }
+
+    loadOutposts = async () =>{
+        this.setLoadingInitial(true);
+
+            try{
+                runInAction(()=>this.allOutposts=false) ;
+                console.log(this.allOutposts)
+                const outpostsLoad = await agent.Outposts.list();
+                outpostsLoad.forEach(outpost => 
+                    this.outpostRegistry.set(outpost.id,outpost)
+                );
+                this.setLoadingInitial(false);
+            }
+            catch(error){
+                console.log(error);
+                this.setLoadingInitial(false);
+            }
     }
     
     loadOutpost = async (id:number) => {
@@ -39,6 +108,7 @@ export default class OutpostStore{
             console.log(`Taki obiekt w promise istnieje id:${id}, outpost.name: ${outpost.name}`);
             outpost.id=id;
             this.selectedOutpost = outpost;
+            runInAction(()=>this.allOutposts=false);
             return outpost;
         }
         else {
@@ -48,6 +118,7 @@ export default class OutpostStore{
                 this.outpostRegistry.set(outpost.id,outpost);
                 this.selectedOutpost = outpost;
                 this.setLoadingInitial(false);
+                runInAction(()=>this.allOutposts=false);
                 return outpost;
             }
             catch(e)
@@ -65,24 +136,10 @@ export default class OutpostStore{
     }
     
 
-    createOutpost = async (outpost: Outpost) =>{
-        this.loading =true;
-        try{
-            const response = await agent.Outposts.create(outpost);
-            runInAction(() => {
-                outpost.userId= 4;
-                outpost.id = response.id;
-                this.outpostRegistry.set(response.id,outpost);
-                this.selectedOutpost = outpost;
-                this.loading=false;
-            });
-        }
-        catch(e){
-            runInAction(() => {
-                this.loading=false;
-            });
-            
-        }
+    
+    clearOutpost=()=>{
+        this.outpostRegistry.clear();
+        this.allOutposts=false;
     }
 
 
@@ -92,6 +149,8 @@ export default class OutpostStore{
         this.loading=true;
         try{
             await agent.Outposts.update(outpost);
+            runInAction(()=>this.allOutposts=false);
+
             runInAction(()=>{
                 this.outpostRegistry.set(outpost.id,outpost);
                 this.selectedOutpost=outpost;
@@ -112,6 +171,8 @@ export default class OutpostStore{
         this.loading=true;
         try{
              await agent.Outposts.delete(id);
+             runInAction(()=>this.allOutposts=false);
+
              runInAction(()=>{
                 this.outpostRegistry.delete(id);
                 this.loading=false;
@@ -124,5 +185,31 @@ export default class OutpostStore{
                 this.loading=false;
             });
         }
+    }
+
+//sortowania
+    sortChroniclesByName(){
+        let array = Array.from(this.outpostRegistry.values());
+        array.sort((a, b) => a.name.localeCompare(b.name) );
+
+        this.outpostRegistry.clear(); 
+
+        array.forEach(
+            chronicle =>{
+                this.outpostRegistry.set(chronicle.id,chronicle);
+            }
+        );
+    }
+    sortChroniclesByCity(){
+        let array = Array.from(this.outpostRegistry.values());
+        array.sort((a, b) => a.city.localeCompare(b.city) );
+
+        this.outpostRegistry.clear(); 
+
+        array.forEach(
+            chronicle =>{
+                this.outpostRegistry.set(chronicle.id,chronicle);
+            }
+        );
     }
 }

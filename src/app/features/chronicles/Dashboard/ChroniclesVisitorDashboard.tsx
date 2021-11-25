@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import { Button, Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../layout/LoadingComponent";
 import { useStore } from "../../../stores/store";
+import ChroniclesFilter from "../filter/ChronicleFilter";
 import ChroniclesList from "./ChroniclesList";
 
 
@@ -17,7 +18,7 @@ export default observer(function ChroniclesVisitorDashBoard(){
     (EditorState.createWithContent(ContentState.createFromText('Brak treści... uzupełnij dane edytując wpis')));
 
 
- 
+    const {loadingInitial,}= chronicleStore;
 
     useEffect(()=>{
         getAllChronicles().then(
@@ -28,13 +29,14 @@ export default observer(function ChroniclesVisitorDashBoard(){
            
     },[getAllChronicles])
 
-    if(chronicleStore.loadingInitial ) return <LoadingComponent content={"loading Polonicus"}/> 
+    if(loadingInitial ) return <LoadingComponent content={"loading Polonicus"}/> 
     return(
         <Grid>
+            <Grid.Column width='4'>
+                <ChroniclesFilter/>
+            </Grid.Column>
             <Grid.Column width='12'>
                 <ChroniclesList />
-            </Grid.Column>
-            <Grid.Column width='4'>
             </Grid.Column>
         </Grid>
     );
