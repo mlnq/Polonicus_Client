@@ -17,7 +17,8 @@ export default function MyEditor({data}:Props) {
     const styles = {
         editor: {
           border: "1px solid gray",
-          minHeight: "6em"
+          minHeight: "6em",
+          padding:'2em',
         }
       };
       

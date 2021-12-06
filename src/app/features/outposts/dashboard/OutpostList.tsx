@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { Segment,Item, Button, Label, Modal, Header, Icon } from "semantic-ui-react";
+import LoadingComponent from "../../../layout/LoadingComponent";
 import { Outpost } from "../../../models/outpost";
 import { useStore } from "../../../stores/store";
 
@@ -19,12 +20,20 @@ export default observer( function OutpostList(){
     
     const [target,setTarget] = useState(0);
     const [open, setOpen] = React.useState(false)
+    //cur id to delete
+    const [currentId, setCurrentId] = React.useState(0);
 
-    function handleOutpostDelete(event: SyntheticEvent<HTMLButtonElement>,id:number){
-        let currentButton =parseInt(event.currentTarget.id);
-        setTarget(currentButton);
-        deleteOutpost(id);
-    }
+    // function handleOutpostDelete(event: SyntheticEvent<HTMLButtonElement>,id:number){
+    //     let currentButton =parseInt(event.currentTarget.id);
+    //     setTarget(currentButton);
+    //     deleteOutpost(id);
+    // }
+    function handleOutpostDelete(id:number){
+
+            let currentModalButton = currentId;
+            setTarget(currentModalButton);
+            deleteOutpost(id);
+        }
     
     // if(outposts.length === 1)  loadOutposts();
     return (
@@ -39,7 +48,6 @@ export default observer( function OutpostList(){
                                     <Item.Meta></Item.Meta>
                                     <Item.Description> 
                                         <div>{outpost.description}</div>  
-                                        <div>{outpost.street}</div>
                                     </Item.Description>
                                     <Item.Extra>
 
@@ -52,45 +60,74 @@ export default observer( function OutpostList(){
                                             color='black'
                                         /> */}
 
-                                        <Modal
+                                        <Modal id={outpost.id}
                                             basic
                                             onClose={() => setOpen(false)}
-                                            onOpen={() => setOpen(true)}
+                                            onOpen={() => 
+                                                {
+                                                    console.log(outpost.id)   
+                                                    setCurrentId(outpost.id);
+                                                    setOpen(true)}
+                                                }
                                             open={open}
                                             size='small'
                                             trigger={
-                                            <Button color='black' floated='right'
-                                                id={outpost.id}
-                                                loading={loading && target === outpost.id}
-                                            >Usuń</Button>
+                                                <Button color='black' floated='right'
+                                                >
+                                                    Usuń
+                                                </Button>
                                             }
                                             >
                                             <Header icon>
                                                 <Icon name='trash' />
-                                                Usuwanie placówki: {outpost.name}
+                                                Usuwanie placówki
                                             </Header>
-                                            <Modal.Content>
-                                                <p>
-                                                Czy napewno chcesz usunąć daną placówkę ?
-                                                </p>
-                                            </Modal.Content>
+
+                                            {
+                                                    loading && target === currentId ?
+                                                    (
+                                                        <LoadingComponent content={`Usuwanie placówki`}/>
+                                                    )
+                                                    :
+                                                    (
+                                                        <Modal.Content>
+                                                        <p>
+                                                            Czy napewno chcesz usunąć daną placówkę ?
+                                                        </p>
+                                                        </Modal.Content>
+                                                    )
+
+                                            }
                                             <Modal.Actions>
-                                                <Button basic color='red' inverted onClick={() => setOpen(false)}>
+                                                <Button basic color='red' inverted onClick={() => 
+                                                    {
+                                                        console.log(currentId)
+                                                        setOpen(false)
+                                                    }
+                                                    }>
                                                 <Icon name='remove' /> Nie
                                                 </Button>
-                                                <Button color='green' inverted onClick={(event) => {
-                                                    setOpen(false)
-                                                    handleOutpostDelete(event,outpost.id);
-                                                }}>
+
+                                             
+                                                <Button id={outpost.id} color='green' inverted 
+                                                        onClick={async (event) => {
+                                                            await console.log(outpost.id)
+                                                            await handleOutpostDelete(currentId);
+                                                            await console.log('usunięto : '+ currentId)
+                                                            await setOpen(false);}}
+                                                >
+                                                    
                                                 <Icon name='checkmark' /> Tak
                                                 </Button>
+
                                             </Modal.Actions>
                                         </Modal>
 
                                         <Button as={Link} to={`/outposts/${outpost.id}`} floated='right' content='Podgląd' color='red'/>
                                         <Button as={Link} to={`/outposts/${outpost.id}/chronicle`} floated='right' content='Kroniki placówki' color='violet'/>
-
-                                        <Label content={outpost.city}/>
+                                       
+                                        
+                                        <Label > <Icon className="fitIcon" name="map marker alternate"></Icon> {outpost.city}, {outpost.country}</Label>   
                                     </Item.Extra>
                                 </Item.Content>
                             </Item>

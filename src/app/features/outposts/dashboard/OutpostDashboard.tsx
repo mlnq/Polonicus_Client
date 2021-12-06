@@ -16,19 +16,33 @@ export default observer(function OutpostDashboard(){
 
     const {outpostStore,userStore} = useStore();   
     const {outpostRegistry,loadOutposts,setLoadingInitial,allOutposts,clearOutpost,outposts} = outpostStore;
-    const {isLogged,anotherUserLogged}=userStore;
+    const {isLogged,firstTime,setFirstTime}=userStore;
 
 
   
     useEffect(()=>{
+       
+        if(firstTime)
+        {
+            console.log('pierszy raz')
+            clearOutpost();
+            setFirstTime(false);
+        }
+        else{
+
+        if(outposts.length<=0) {
+           loadOutposts();
+        }
+        }
+
         if(allOutposts)
         {
            clearOutpost();
-            loadOutposts();
+           loadOutposts();
        }
-       if(outposts.length<=0) loadOutposts();
+       
       
-    },[loadOutposts,allOutposts,outposts.length,clearOutpost]);
+    },[allOutposts,clearOutpost,firstTime,setFirstTime]);
 
    
 
@@ -40,8 +54,8 @@ export default observer(function OutpostDashboard(){
                 <Button fluid as={Link} to="/outpostCreate" name="outpostCreate" icon='plus' negative content='Dodaj Placówke'/>
                 <OutpostFilter/>
 
-
             </Grid.Column>
+            
             <Grid.Column width='12'>
                 <OutpostList />
             </Grid.Column>

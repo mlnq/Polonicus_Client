@@ -9,7 +9,8 @@ export default class OutpostStore{
     selectedOutpost: Outpost | undefined = undefined;
     loading = false;
     loadingInitial: Boolean|undefined = undefined;
-    allOutposts:Boolean|undefined = undefined;
+    allOutposts:Boolean|undefined = false;
+
 
     constructor(){
         makeAutoObservable(this);
@@ -24,15 +25,27 @@ export default class OutpostStore{
     
         console.log(outpost.city);
         let response = await Nominatim.geocode({
+            country: outpost.country,
             city: outpost.city,
-            country: outpost.street,
-            // street: outpost.street,
-            // postalcode: outpost.postalCode,
-            addressdetails: true,
+            street: outpost.street,
+            addressdetails: false,
         })
+        if(response)
+        {
+            response = await Nominatim.geocode({
+                country: outpost.country,
+                city: outpost.city,
+            })
+        }
+        else{
+            response = await Nominatim.geocode({
+                country: outpost.country,
+            })
+        }
         console.log(response);
         console.log(response[0]);
         // return [parseFloat(response[0]['lat']),parseFloat(response[0]['lon'])];
+        //git jest to 
         return response[0];
     }
     createOutpost = async (outpost: Outpost) =>{
@@ -154,7 +167,6 @@ export default class OutpostStore{
             runInAction(()=>{
                 this.outpostRegistry.set(outpost.id,outpost);
                 this.selectedOutpost=outpost;
-                // this.editMode=false;
                 this.loading=false;
             });
         }
@@ -188,9 +200,14 @@ export default class OutpostStore{
     }
 
 //sortowania
-    sortChroniclesByName(){
+    sortChroniclesByName(direction:Boolean){
         let array = Array.from(this.outpostRegistry.values());
-        array.sort((a, b) => a.name.localeCompare(b.name) );
+
+        direction?
+        array.sort((a, b) => a.name.localeCompare(b.name) )
+        :
+        array.sort((a, b) => b.name.localeCompare(a.name) );
+
 
         this.outpostRegistry.clear(); 
 
@@ -200,9 +217,15 @@ export default class OutpostStore{
             }
         );
     }
-    sortChroniclesByCity(){
+    
+    sortChroniclesByCity(direction:Boolean){
         let array = Array.from(this.outpostRegistry.values());
-        array.sort((a, b) => a.city.localeCompare(b.city) );
+        
+        direction?
+        array.sort((a, b) => a.city.localeCompare(b.city) )
+        :
+        array.sort((a, b) => b.city.localeCompare(a.city) )
+
 
         this.outpostRegistry.clear(); 
 

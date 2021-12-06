@@ -103,7 +103,7 @@ export default observer(function ChronicleForm(){
             {({handleSubmit, isValid, dirty, isSubmitting})=>
             (
                 <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
-                    <MyFieldInput  placeholder="Nazwa" name="name" label='Nazwa placówki'/> 
+                    <MyFieldInput  placeholder="Nazwa" name="name" label='Tytuł kroniki'/> 
 
                     <TextEditor
                         editorState={editorState}

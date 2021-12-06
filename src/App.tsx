@@ -18,6 +18,7 @@ import OutpostMap from './app/features/mapOutposts/OutpostMap';
 import LoginForm from './app/features/user/LoginForm';
 import RegisterForm from './app/features/user/RegisterForm';
 import AccountDetails from './app/features/user/AccountDetails';
+import AdminDashboard from './app/features/user/admin/AdminDashboard';
 import OutpostMapPanel from './app/features/mapOutposts/OutpostMapPanel';
 import NotFound from './app/features/errors/NotFound';
 
@@ -74,6 +75,7 @@ function App() {
           component={ChronicleForm}></Route>
 {/* USER */}
           <Route exact path={"/accountDetails"} component={AccountDetails}></Route>
+          <Route exact path={"/adminDashboard"} component={AdminDashboard}></Route>
        
 
 {/* Nie znaleziono ścieżki */}

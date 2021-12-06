@@ -1,23 +1,37 @@
-import React, { useEffect } from "react";
-import { Card, Header } from "semantic-ui-react";
+import { observer } from "mobx-react-lite";
+import React, { useEffect, useState } from "react";
+import { Button, Card, Header, Icon } from "semantic-ui-react";
 import { useStore } from "../../stores/store";
 import OutpostMap from "./OutpostMap";
 
 
-export default function OutpostMapPanel(){
-
-   
+export default observer(function OutpostMapPanel(){
 
 
+    const [visibility, setVisibility] = useState(true);
+
+    // const zoom : number = 3.8;
     return(
-        <div  >
-            <div className='testt'></div>
-            <div className='test'></div>
+        <>
+         <div className='mapFrame'></div>
+            {/* <div className='mapFrameTopFill'></div> */}
 
-            <div className='roundedMapDiv'>
-                   <h3> Sprawdź skąd pochodzą opowiedziane historie!</h3>
-            </div>
-            <OutpostMap/>
+
+            {
+                visibility?
+                (
+                    <div className='roundedMapDiv'>
+                            <a  href="#" onClick={() => setVisibility(!visibility)}><h3>X</h3></a>
+                        <h3> Sprawdź skąd pochodzą opowiedziane historie!</h3>
+                    </div>
+                )
+                :
+                null
+            }
+
+        <div className='mapContainer' >
+            <OutpostMap />
         </div>   
+        </>
     );
-}
+});

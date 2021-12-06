@@ -8,7 +8,7 @@ import { useStore } from "../stores/store";
 
 export default observer(function NavBar(){
 
-    const {userStore} = useStore();
+    const {userStore,utilsStore} = useStore();
     const {accountDetails,logout}=userStore;
 
     const [showNav,setShowNav] = useState(true);
@@ -52,6 +52,13 @@ export default observer(function NavBar(){
                         <Dropdown.Menu  >
                             <Dropdown.Item as={Link} to="/accountDetails" text="Szczegóły konta"/>
                             <Dropdown.Item as={Link} to="/outposts" text="Mój panel placówek"/>
+                            {
+                                userStore.Role ===2 ?
+                                (
+                                 <Dropdown.Item as={Link} to="/adminDashboard" text="Panel Administracyjny"/>
+
+                                ):null
+                            }
                             <Dropdown.Item onClick={logout} text="wyloguj"/>
                         </Dropdown.Menu>
                         </Dropdown>

@@ -9,9 +9,37 @@ import UserRegister from "../models/userRegister";
 export default class UserStore{
 
     private user: User | null = null;
+    public users: User[] = [];
+    public firstTime: boolean| null = true;
+    public loading = false;
+    public successfulAttempt = true;
 
     constructor(){
         makeAutoObservable(this);
+    }
+
+    getAllUsers= async() => {
+        try{
+            this.users = await agent.Account.getAll();
+        }
+        catch(e){
+            console.log(e);
+        }
+        return this.users;
+    }
+    
+    setLoading = (state:boolean)=>
+    {
+        this.loading=state;
+    }
+
+    get allUsers()
+    {
+        return this.users;
+    }
+    get Role()
+    {
+        return this.user?.roleId;
     }
 
     get accountDetails()
@@ -19,20 +47,9 @@ export default class UserStore{
         return this.user;
     }
 
-    get anotherUserLogged()
-    {
-        if( window.localStorage.jwt === this.user?.token)
-        {
-            console.log(window.localStorage.jwt);
-            console.log(this.user?.token);
-            console.log('tokeny się nie różnią')
-            return false;
-        }
-       
-            console.log('tokeny się różnią')
-            return true;
-       
-    }
+    setFirstTime = (state:boolean) => {
+        this.firstTime=state;
+     }
 
     get isLogged()
     {
@@ -41,6 +58,7 @@ export default class UserStore{
 
     login = async (userCreds: UserCreds) =>{
 
+        this.setLoading(true);
         try{
             const user = await agent.Account.login(userCreds);
             store.utilsStore.setToken(user.token);
@@ -49,13 +67,16 @@ export default class UserStore{
             {
                 this.user=user;
                 this.user.dateOfBirth = new Date(user.dateOfBirth!);
+                this.successfulAttempt=true;
             });
 
-
+            this.setLoading(false);
             history.push('/outposts');
             console.log(user);
         }
         catch(e){
+            this.setLoading(false);
+            runInAction(() =>{this.successfulAttempt=false; });
             console.log(e);
         }
     }
@@ -64,17 +85,57 @@ export default class UserStore{
         store.utilsStore.setToken(null);
         window.localStorage.removeItem('jwt');
         this.user=null;
+        this.setFirstTime(true);
         history.push('/');
      }
 
-     register = async(user:UserRegister) =>{
+    register = async(user:UserRegister) =>{
+        this.setLoading(true);
         console.log('rejestruje Usera w BD');
         try{
+
+            this.setLoading(false);
+            runInAction(() =>{this.successfulAttempt=true; });
+
             await agent.Account.register(user);
             //dodac info ze zarejestrowano pomyslnie
             history.push('/');
         }
         catch(e){
+            this.setLoading(false);
+            runInAction(() =>{this.successfulAttempt=false; });
+
+            console.log(e);
+        }
+     }
+
+     upgrade = async(user:User)=>{
+        this.setLoading(true);
+        try{
+            agent.Account.upgradeUser(user);
+            runInAction(() =>
+            {
+               user.roleId=2;
+            });
+            this.setLoading(false);
+        }
+        catch(e){
+            this.setLoading(false);
+            console.log(e);
+        }
+     }
+     downgrade = async(user:User)=>{
+        this.setLoading(true);
+        try{
+            agent.Account.downgradeUser(user);
+            runInAction(() =>
+            {
+               user.roleId=1;
+            });
+            this.setLoading(false);
+        }
+        catch(e){
+            this.setLoading(false);
             console.log(e);
         }
      }
@@ -104,8 +165,7 @@ export default class UserStore{
      getAge =() =>{
          var today = new Date();
          var birthday =this.user!.dateOfBirth;
-          var age = today.getFullYear() - birthday!.getFullYear();
-          var age = today.getFullYear() - birthday!.getFullYear();
+         var age = today.getFullYear() - birthday!.getFullYear();
          var m = today.getMonth() - birthday!.getMonth();
 
          if (m < 0 || (m === 0 && today.getDate() < birthday!.getDate())) 

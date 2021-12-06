@@ -68,9 +68,12 @@ const Chronicles ={
     delete: (outpostId:number, id:number) => request.delete<void>(`/outpost/${outpostId}/chronicle/${id}`)
 }
 const Account ={
+    getAll: () => request.get<User[]>('/account/getAll'),
     login: (user: UserCreds) => request.post<User>('/account/login',user),
     register: (user: UserRegister) => request.post<void>('/account/register',user),
-    getUser: () => request.get<User>('/account')
+    getUser: () => request.get<User>('/account'),
+    upgradeUser: (user: UserCreds) => request.put<void>('/account/upgrade',user),
+    downgradeUser: (user: UserCreds) => request.put<void>('/account/downgrade',user),
 }
 
 const agent ={

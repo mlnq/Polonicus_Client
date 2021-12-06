@@ -4,6 +4,7 @@ import React, { SyntheticEvent, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button, Icon, Item, Label, Modal } from "semantic-ui-react";
 import Chronicle from "../../../models/chronicle";
+import { useStore } from "../../../stores/store";
 import TextView from "../../../utils/TextView";
 
 
@@ -19,16 +20,11 @@ export default observer(function ChroniclesVisitorItem({chronicle,target,chronic
 {
       const { chronicleId } = useParams<{ chronicleId: string }>();
       const [open, setOpen] = React.useState(false)
+      const {chronicleStore} =useStore();
 
       const [editorState,setEditorState] = useState<EditorState>
       (EditorState.createWithContent(ContentState.createFromText('Brak treści... uzupełnij dane edytując wpis')));
   
-  
-      
-    let DateString = ('0' + chronicle.publicationDate.getDate()).slice(-2) + '/'
-    + ('0' + (chronicle.publicationDate.getMonth()+1)).slice(-2) + '/'
-    + chronicle.publicationDate.getFullYear();
-      
     const viewText= () =>{
       try{
         console.log(chronicle)
@@ -51,11 +47,17 @@ return(
               src="https://react.semantic-ui.com/images/wireframe/image.png"
             ></Item.Image>
 
-            <Item.Content>
+            <Item.Content className="itemContent">
               <Item.Header>{chronicle.name}</Item.Header>
               <Item.Meta>
-                
-                <Label className="date">{DateString}</Label>
+                <Label className="date">
+                  <span>
+                  <Icon name='calendar alternate outline' style={{ display: 'inline'}}/>
+                  <span style={{marginLeft: '5px' }}>
+                  {chronicleStore.dateFormat(chronicle)}
+                  </span>
+                  </span>
+                </Label>
               </Item.Meta>
             </Item.Content>
             <Item.Extra>
@@ -85,14 +87,6 @@ return(
                    </Modal.Actions>
                  </Modal>
                 }
-                {/* <Button
-                  as={Link}
-                  to={`/outposts/${chronicle.outpostId}/chronicle/${chronicle.id}/details`}
-                  floated="right"
-                  content="Wyświetl całość"
-                  color="violet"
-                  icon="level down alternate"
-                /> */}
               </Button.Group>
             </Item.Extra>
 </Item>);

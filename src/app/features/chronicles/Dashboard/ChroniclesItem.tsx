@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button, Item, Label } from "semantic-ui-react";
+import { Button, Icon, Item, Label } from "semantic-ui-react";
 import Chronicle from "../../../models/chronicle";
 import { useStore } from "../../../stores/store";
 
@@ -17,13 +17,9 @@ interface Props{
 export default observer( 
 function ChroniclesItem({chronicle,target,chronicleDelete}:Props)
 {
-  const { chronicleId } = useParams<{ chronicleId: string }>();
-  const {userStore} =useStore();
+  const { chronicleId, } = useParams<{ chronicleId: string }>();
+  const {userStore,chronicleStore} =useStore();
   const {isLogged}=userStore;
-
-  let DateString = ('0' + chronicle.publicationDate.getDate()).slice(-2) + '/'
-+ ('0' + (chronicle.publicationDate.getMonth()+1)).slice(-2) + '/'
-+ chronicle.publicationDate.getFullYear();
 
 return(
 <Item >
@@ -32,15 +28,24 @@ return(
               src="https://react.semantic-ui.com/images/wireframe/image.png"
             ></Item.Image>
 
-            <Item.Content>
+            <div className='content'>
               <Item.Header>{chronicle.name}</Item.Header>
               <Item.Meta>
-                <Label className="date">{DateString}</Label>
+                <Label className="date">
+                  <span>
+                  <Icon name='calendar alternate outline' style={{ display: 'inline'}}/>
+                  <span style={{marginLeft: '5px' }}>
+                  {chronicleStore.dateFormat(chronicle)}
+                  </span>
+                  </span>
+                </Label>
               </Item.Meta>
               <Item.Description>
-                {/* {chronicle.description.slice(0, 10)}... */} ...
+
+                {/* {chronicle.description.slice(0, 10)}... */}
               </Item.Description>
-            </Item.Content>
+            </div>
+            
             <Item.Extra>
               <Button.Group vertical color='violet' floated="right">
                 

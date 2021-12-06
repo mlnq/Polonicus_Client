@@ -4,11 +4,14 @@ export interface Outpost{
     id: number;
     name: string;
     description: string;
-    population: number;
     category: string;
+
+    country:string;
     city: string;
     street: string;
+
     postalCode: string;
+
     chronicles?: (Chronicles)[] | null;
     userId?:number;
 

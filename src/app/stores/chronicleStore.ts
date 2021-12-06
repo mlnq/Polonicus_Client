@@ -19,12 +19,30 @@ export default class ChronicleStore{
         return Array.from(this.chronicleRegistry.values()); 
     }
 
-    sortChroniclesByDate(){
+
+    dateFormat =  (chronicle:Chronicle)=>{
+        return ('0' + chronicle.publicationDate.getDate()).slice(-2) + '/'
+        + ('0' + (chronicle.publicationDate.getMonth()+1)).slice(-2) + '/'
+        + chronicle.publicationDate.getFullYear();
+    }
+
+    description = () =>{
+        
+        return 0;
+    }
+
+    sortChroniclesByDate(direction:Boolean){
         let array = Array.from(this.chronicleRegistry.values());
+
+        direction?
         array.sort(function(a:any,b:any){
             return b.publicationDate - a.publicationDate;
-        });
-        
+        })
+        :
+        array.sort(function(a:any,b:any){
+            return a.publicationDate - b.publicationDate;
+        })
+
         this.chronicleRegistry.clear(); 
 
         array.forEach(
@@ -33,9 +51,12 @@ export default class ChronicleStore{
             }
         );
     }
-    sortChroniclesByName(){
+    sortChroniclesByName(direction:Boolean){
         let array = Array.from(this.chronicleRegistry.values());
-        array.sort((a, b) => a.name.localeCompare(b.name) );
+        direction?
+        array.sort((a, b) => a.name.localeCompare(b.name) )
+        :
+        array.sort((a, b) => b.name.localeCompare(a.name) );
 
         this.chronicleRegistry.clear(); 
 

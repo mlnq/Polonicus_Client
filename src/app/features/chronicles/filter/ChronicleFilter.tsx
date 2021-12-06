@@ -6,18 +6,52 @@ import { useStore } from "../../../stores/store";
 
 export default observer( function ChroniclesFilter(){
 
-    const [dataFilterBtn,setDataFilterBtn] = useState('type:basic');
 
     const {chronicleStore}= useStore();
+    
+    const [dataUpSort,setDataUpSort]=useState(true);
+    const [titleUpSort,setTitleUpSort]=useState(true);
+
 
     return(
             <Card>
                  <div style={{display:'flex !important'}}>
-                    <h3> Filtry: </h3>
+                 <div className="filterBox">
+                     <h3 >Filtry </h3>
+                 </div>
                     <Card.Description column >
-                        Sortuj według:
-                        <Button fluid basic onClick={()=>{chronicleStore.sortChroniclesByDate()}}>Daty</Button>
-                        <Button fluid basic onClick={()=>{chronicleStore.sortChroniclesByName()}}>Tytułu</Button>
+                    <div className="ui button basic fluid flexLeft" 
+                    onClick={()=>{
+                        setDataUpSort(!dataUpSort);
+                        chronicleStore.sortChroniclesByDate(dataUpSort)}}>
+                   {
+                       dataUpSort?
+                       (
+                        <Icon name="arrow up"/>
+                       )
+                        :
+                       (
+                        <Icon name="arrow down"/>
+                       )
+                   }
+                    Data
+               </div>
+               <div className="ui button basic fluid flexLeft" 
+                    onClick={()=>{
+                        setTitleUpSort(!titleUpSort);
+                        chronicleStore.sortChroniclesByName(titleUpSort)}}>
+                   {
+                       titleUpSort?
+                       (
+                        <Icon name="arrow up"/>
+                       )
+                        :
+                       (
+                        <Icon name="arrow down"/>
+                       )
+                   }
+                   Tytuł kroniki
+               </div>
                     </Card.Description>
                  </div>
             </Card>

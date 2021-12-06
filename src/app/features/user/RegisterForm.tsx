@@ -1,7 +1,7 @@
 import { Formik } from "formik";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
-import { Button, ButtonGroup, Form, Header } from "semantic-ui-react";
+import { Button, ButtonGroup, Form, Header, Message } from "semantic-ui-react";
 import { useStore } from "../../stores/store";
 import MyFieldInput from '../../utils/MyFieldInput';
 import pl from 'date-fns/locale/pl';
@@ -16,7 +16,7 @@ export default observer(function RegisterForm()
 {
     registerLocale('pl', pl);
     const {userStore} = useStore();
-    const {register}= userStore;
+    const {register,successfulAttempt}= userStore;
     const [startDate, setStartDate] = useState(new Date());
 
 
@@ -34,7 +34,8 @@ export default observer(function RegisterForm()
         <div className='box background'>
 
         <div className="ui fluid card userForm ">
-        <Header>Rejestracja</Header>
+        <Header style={{padding:'1em'}}>Rejestracja</Header>
+
         <div className="content" >
                 <Formik
                     validationSchema={registerValidationSchema} 
@@ -56,18 +57,20 @@ export default observer(function RegisterForm()
                         dateFormat="dd.MM.yyyy"
                         locale="pl"
                         />
-
-                        {/* <ReactDatePicker 
-                        dateFormat="yyyy/MM/dd"
-                        locale="pl"
-                        selected={startDate} onChange={(date:Date) => setStartDate(date)}/> */}
-                        {/* <MyFieldInput placeholder="DateOfBirth" name="dateOfBirth" label='Data urodzenia'/> */}
                         <MyFieldInput placeholder="Nationality" name="nationality" label='Narodowość'/>
                         
-                        <Button icon='lock' loading={isSubmitting} positive content='Zatwierdź' type='submit' fluid/>
+                        <Button className="topMargin" icon='lock' loading={isSubmitting} positive content='Zatwierdź' type='submit' fluid/>
                     </form>
                 )}
                 </Formik>
+                {
+                    successfulAttempt  ? null:
+                    (
+                        (<Message negative>
+                            <Message.Header>Podany mail już istnieje w bazie</Message.Header>
+                        </Message>)
+                    )
+                 }
 
       </div>  
       </div>  

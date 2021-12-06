@@ -15,11 +15,12 @@ export default function MyEditor({error,editorState,setEditorState}:Props) {
     const styles = {
         editor: {
           border: "1px solid #ddd",
-          minHeight: "6em",
+          minHeight: "30em",
           borderRadius: "5px",
-          padding:'6',
-          // height: '400px',
-          // overflowY: 'auto'
+          padding:'2em',
+          // overflowY: 'scroll',
+          height: '400px',
+          overflowY: 'auto'
         },
         editorDanger: {
           border: "1px solid red",

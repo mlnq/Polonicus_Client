@@ -2,7 +2,7 @@ import { Formik,Form, Field, ErrorMessage} from "formik";
 import { observer } from "mobx-react-lite";
 import React, { ChangeEvent,useEffect,useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { Button, ButtonGroup, FormField, Segment } from "semantic-ui-react";
+import { Button, ButtonGroup, FormField, Message, Segment } from "semantic-ui-react";
 import { Outpost } from "../../../models/outpost";
 import { useStore } from "../../../stores/store";
 import * as Yup from 'yup';
@@ -13,28 +13,30 @@ import LoadingComponent from "../../../layout/LoadingComponent";
 export default observer( function OutpostForm(){
 
     const {outpostStore} = useStore();
-    const {createOutpost,updateOutpost,loading,loadOutpost,loadingInitial} = outpostStore;
+    const {createOutpost,updateOutpost,loading,loadOutpost,loadingInitial,getLongLat} = outpostStore;
     
     const history= useHistory();
     const {id} = useParams<{id: string}>();
+
+    const [validCoords,setValidCoords] =useState(true);
     
     const [outpost, setOutpost] = useState({
         id:0,
         name: '',
         description: '',
+        country: '',
         city: '',
         street: '',
         postalCode:'',
-        population: 100,
         category:''
     })
 
     const outpostValidationSchema = Yup.object().shape({
         name: Yup.string().required('Nazwa placówki jest wymagana!'),
         description: Yup.string().required('Opis placówki jest wymagane!'),
+        country: Yup.string().required('Kraj jest wymagany!'),
         city: Yup.string().required('Miasto jest wymagane!'),
         street: Yup.string().required('Ulica jest wymagana!'),
-        population: Yup.string().required('Ilość populacji jest wymagana!'),
         category: Yup.string().required('Kategoria jest wymagana!'),
     })
 
@@ -49,9 +51,16 @@ export default observer( function OutpostForm(){
         
     },[id,loadOutpost])
 
-    function handleFormSubmit(outpost: Outpost){
-        if(!outpost.id) createOutpost(outpost).then(()=> history.push(`/outposts`))
-        else updateOutpost(outpost).then(()=> history.push(`/outposts`))
+    async function handleFormSubmit(outpost: Outpost){
+        let coords= await getLongLat(outpost);
+        console.log(coords)
+        if(coords)
+        {
+            if(!outpost.id) createOutpost(outpost).then(()=> history.push(`/outposts`))
+            else updateOutpost(outpost).then(()=> history.push(`/outposts`))
+            setValidCoords(true);
+        }
+        else setValidCoords(false);
     }
 
     if(loadingInitial) return <LoadingComponent content="Wczytywanie formularza"/>;
@@ -59,6 +68,16 @@ export default observer( function OutpostForm(){
 
     return(
         <Segment clearing>
+            {
+                !validCoords ? 
+                (<Message negative>
+                    <Message.Header>Błąd formularza</Message.Header>
+                    <p>Wprowadzono zły adres</p>
+                </Message>)
+                :
+                null
+            }
+            
             <Formik 
             validationSchema={outpostValidationSchema} 
             enableReinitialize 
@@ -67,23 +86,14 @@ export default observer( function OutpostForm(){
                 {({handleSubmit, isValid, dirty, isSubmitting})=>
                 (
                     <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
-                        {/* value w teroii też moge usunac w praktyce jest problem jak 
-                        z bazy danych przekazuje wartośc pustą wtedy wyskakuje null */}
-                        {/* <FormField>
-                        <Field placeholder='name' value={outpost.name || ' '} name='name' />
-                        </FormField> */}
+                     
                         <MyFieldInput  placeholder="Nazwa" name="name" label='Nazwa placówki'/> 
                         <MyFieldTextArea rows={4}  placeholder="Opis" name="description" label='Opis'/> 
+                        <MyFieldInput  placeholder="Kraj" name="country" label='Kraj'/> 
                         <MyFieldInput  placeholder="Miasto" name="city" label='Miasto'/> 
                         <MyFieldInput  placeholder="Ulica" name="street" label='Ulica'/> 
-                        <MyFieldInput  placeholder="Populacja Miasta" name="population" label='Populacja'/> 
                         <MyFieldInput  placeholder="Kategoria Placówki" name="category" label='Kategoria'/> 
 
-                        {/* <Field placeholder='description' value={outpost.description} name='description' />
-                        <Field placeholder='city' value={outpost.city || ' '} name='city' />
-                        <Field placeholder='street' value={outpost.street || ' '} name='street' />
-                        <Field placeholder='population' type='number' value={outpost.population || ' '} name='population' />
-                        <Field placeholder='category' value={outpost.category || ' '} name='category' /> */}
                         <ButtonGroup>
                             <Button  
                             disabled={isSubmitting || !dirty || !isValid}
