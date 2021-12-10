@@ -31,6 +31,7 @@ export default function MyEditor({data}:Props) {
         }
       };
 
+
   return (
     <>
         <Editor editorState={data} readOnly={true} onChange={()=>{}}/>

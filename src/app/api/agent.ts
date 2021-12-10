@@ -60,6 +60,7 @@ const Outposts ={
 }
 
 const Chronicles ={
+    getLastDate: () => request.get<Chronicle>(`/chronicles/last`),
     getAll: () => request.get<Chronicle[]>(`/chronicles`),
     list: (outpostId: number) => request.get<Chronicle[]>(`/outpost/${outpostId}/chronicle`),
     details: (id:number,outpostId: number) => request.get<Chronicle>(`/outpost/${outpostId}/chronicle/${id}`),

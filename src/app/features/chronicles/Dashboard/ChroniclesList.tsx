@@ -42,7 +42,6 @@ export default observer(function ChroniclesList() {
         (
           chronicles.map((chronicle) => (
           <ChroniclesVisitorItem key={chronicle.id} chronicle={chronicle} target={target}
-          chronicleDelete={handleChronicleDelete}
           />))
         )
         :

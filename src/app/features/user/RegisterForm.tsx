@@ -23,7 +23,6 @@ export default observer(function RegisterForm()
     const registerValidationSchema = Yup.object().shape({
         email: Yup.string().required('Email jest wymagany!'),
         password: Yup.string().required('Hasło jest wymagane!'),
-        confirmPassword: Yup.string().required('Potwierdzenie hasła jest wymagane!'),
         dateOfBirth: Yup.string().required('Data urodzenia jest wymagana!').nullable(),
         firstName: Yup.string().required('Imie jest wymagane!'),
         lastName: Yup.string().required('Nazwisko jest wymagane!'),
@@ -39,7 +38,7 @@ export default observer(function RegisterForm()
         <div className="content" >
                 <Formik
                     validationSchema={registerValidationSchema} 
-                    initialValues={{email:'',password:'',firstName:'',lastName:"",dateOfBirth:'',nationality:"",confirmPassword:''}} 
+                    initialValues={{email:'',password:'',firstName:'',lastName:"",dateOfBirth:'',nationality:""}} 
                     onSubmit={val =>register(val)}
                 >
                 {({handleSubmit, isSubmitting})=>
@@ -47,7 +46,6 @@ export default observer(function RegisterForm()
                     <form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
                         <MyFieldInput placeholder="Email" name="email" label='Adres Email'/>
                         <MyFieldInput placeholder="Password" name="password" label='Hasło' type='password'/>
-                        <MyFieldInput placeholder="Password" name="confirmPassword" label='Potwierdź hasło' type='password'/>
                         <MyFieldInput placeholder="FirstName" name="firstName" label='Imie'/>
                         <MyFieldInput placeholder="LastName" name="lastName" label='Nazwisko'/>
                         

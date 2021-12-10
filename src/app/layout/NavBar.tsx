@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Button, Container, Dropdown, Icon, Menu, Transition } from "semantic-ui-react";
 import { useStore } from "../stores/store";
+import { useLanguageChange } from "../utils/useLanguageChange";
 
 
 
@@ -11,7 +12,9 @@ export default observer(function NavBar(){
     const {userStore,utilsStore} = useStore();
     const {accountDetails,logout}=userStore;
 
-    const [showNav,setShowNav] = useState(true);
+    const [showNav,setShowNav] = useState(true);  
+    const [changeLanguage, currentLanguage] = useLanguageChange();
+
     const contolShowNav=() =>{
         if(window.scrollY > 10){
             setShowNav(false);
@@ -40,8 +43,9 @@ export default observer(function NavBar(){
                 <Menu.Item as={NavLink} to="/outposts/map" name="Mapa"/>
                
 
-                <Menu.Item>
-                </Menu.Item>
+                {/* <Dropdown.Menu>
+                    <Dropdown.Item text={currentLanguage} value={currentLanguage}/>
+                </Dropdown.Menu> */}
 
                 {
                     userStore.isLogged? 

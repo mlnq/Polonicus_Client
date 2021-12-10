@@ -19,11 +19,15 @@ export default class UserStore{
     }
 
     getAllUsers= async() => {
+        this.setLoading(true);
         try{
             this.users = await agent.Account.getAll();
+            this.setLoading(false);
         }
         catch(e){
             console.log(e);
+            this.setLoading(false);
+            
         }
         return this.users;
     }

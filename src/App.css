@@ -280,3 +280,8 @@ margin: 0  auto;
 .fitIcon{
   position: relative !important;
 }
+
+.toggle{
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}

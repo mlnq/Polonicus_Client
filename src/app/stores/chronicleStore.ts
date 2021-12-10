@@ -11,6 +11,8 @@ export default class ChronicleStore{
     selectedOutpostId:number = 0;
     allChronicles= false;
 
+    lastChronicle:Chronicle | undefined= undefined;
+
     constructor(){
         makeAutoObservable(this);
     }
@@ -19,6 +21,9 @@ export default class ChronicleStore{
         return Array.from(this.chronicleRegistry.values()); 
     }
 
+    getChronicleWithLastDate = async ()=>{
+        this.lastChronicle= await agent.Chronicles.getLastDate();
+    }
 
     dateFormat =  (chronicle:Chronicle)=>{
         return ('0' + chronicle.publicationDate.getDate()).slice(-2) + '/'

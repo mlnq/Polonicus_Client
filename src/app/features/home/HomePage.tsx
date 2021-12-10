@@ -1,16 +1,22 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Icon } from "semantic-ui-react";
 import NavBar from "../../layout/NavBar";
 import { useStore } from "../../stores/store";
 import LoginForm from "../user/LoginForm";
 import Logo from '../../../resources/logo.svg';
+import {useTranslation} from "react-i18next";
+import { observer } from "mobx-react-lite";
+import I18NextHttpBackend from "i18next-http-backend";
 
-export default function HomePage()
+export default observer(function HomePage()
 {
+    const [t, i18n] = useTranslation('common');
+
     const {userStore} = useStore();
 
     return (
+
         <div className='box background clean'>
 
 
@@ -22,7 +28,7 @@ export default function HomePage()
                     {userStore.isLogged ?
                         (<>
                             <Link to={`/outposts`}>
-                                 <button className='whiteBtn'><Icon name='book'/>Przejdz do Twoich placówek</button>
+                                 <button className='whiteBtn'><Icon name='book'/>{t('welcome.title')}</button>
                             </Link>  
                         </>)
                         :
@@ -44,4 +50,4 @@ export default function HomePage()
         </div>
         
     )
-}
+});

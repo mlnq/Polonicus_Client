@@ -31,7 +31,7 @@ export default observer(function ChroniclesDashBoard(){
         } 
     },[loadChronicles,clearChronicle,outpostId])
 
-    if(chronicleStore.loadingInitial ) return <LoadingComponent content={"loading Polonicus"}/> 
+    if(chronicleStore.loadingInitial ) return <LoadingComponent content={"Wczytywanie Polonicus"}/> 
     return(
         <Grid>
             <Grid.Column width='4'>

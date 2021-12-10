@@ -21,7 +21,7 @@ export default observer( function OutpostList(){
     const [target,setTarget] = useState(0);
     const [open, setOpen] = React.useState(false)
     //cur id to delete
-    const [currentId, setCurrentId] = React.useState(0);
+    const [currentOutpost, setCurrentOutpost] = React.useState(outposts[0]);
 
     // function handleOutpostDelete(event: SyntheticEvent<HTMLButtonElement>,id:number){
     //     let currentButton =parseInt(event.currentTarget.id);
@@ -30,7 +30,7 @@ export default observer( function OutpostList(){
     // }
     function handleOutpostDelete(id:number){
 
-            let currentModalButton = currentId;
+            let currentModalButton = currentOutpost.id;
             setTarget(currentModalButton);
             deleteOutpost(id);
         }
@@ -66,7 +66,7 @@ export default observer( function OutpostList(){
                                             onOpen={() => 
                                                 {
                                                     console.log(outpost.id)   
-                                                    setCurrentId(outpost.id);
+                                                    setCurrentOutpost(outpost);
                                                     setOpen(true)}
                                                 }
                                             open={open}
@@ -80,13 +80,16 @@ export default observer( function OutpostList(){
                                             >
                                             <Header icon>
                                                 <Icon name='trash' />
-                                                Usuwanie placówki
+                                                Usuwanie placówki {currentOutpost.name}
                                             </Header>
 
                                             {
-                                                    loading && target === currentId ?
+                                                    !loading && target === currentOutpost.id ?
                                                     (
+                                                        <Modal.Content>
                                                         <LoadingComponent content={`Usuwanie placówki`}/>
+                                                        </Modal.Content>
+
                                                     )
                                                     :
                                                     (
@@ -101,7 +104,7 @@ export default observer( function OutpostList(){
                                             <Modal.Actions>
                                                 <Button basic color='red' inverted onClick={() => 
                                                     {
-                                                        console.log(currentId)
+                                                        console.log(currentOutpost.id)
                                                         setOpen(false)
                                                     }
                                                     }>
@@ -112,8 +115,8 @@ export default observer( function OutpostList(){
                                                 <Button id={outpost.id} color='green' inverted 
                                                         onClick={async (event) => {
                                                             await console.log(outpost.id)
-                                                            await handleOutpostDelete(currentId);
-                                                            await console.log('usunięto : '+ currentId)
+                                                            await handleOutpostDelete(currentOutpost.id);
+                                                            await console.log('usunięto : '+ currentOutpost.id)
                                                             await setOpen(false);}}
                                                 >
                                                     

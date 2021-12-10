@@ -21,6 +21,8 @@ function ChroniclesItem({chronicle,target,chronicleDelete}:Props)
   const {userStore,chronicleStore} =useStore();
   const {isLogged}=userStore;
 
+
+  
 return(
 <Item >
             <Item.Image
@@ -85,6 +87,7 @@ return(
                   icon="level down alternate"
                 />
               </Button.Group>
+              
             </Item.Extra>
 </Item>);
 });

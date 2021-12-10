@@ -2,7 +2,7 @@
 export default interface UserRegister{
     email: string;
     password: string;
-    confirmPassword: string;
+    // confirmPassword: string;
     nationality: string;
     dateOfBirth: string;
     firstName: string;

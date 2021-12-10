@@ -7,6 +7,7 @@ import LoadingComponent from "../../../layout/LoadingComponent";
 import { useStore } from "../../../stores/store";
 import ChroniclesFilter from "../filter/ChronicleFilter";
 import ChroniclesList from "./ChroniclesList";
+import ChroniclesVisitorItem from "./ChroniclesVisitorItem";
 
 
 

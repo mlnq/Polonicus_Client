@@ -9,6 +9,10 @@ import * as Yup from 'yup';
 import MyFieldInput from "../../../utils/MyFieldInput";
 import MyFieldTextArea from "../../../utils/MyFieldTextArea";
 import LoadingComponent from "../../../layout/LoadingComponent";
+import MyFieldSelect from "../../../utils/MyFieldSelect";
+import { categoryOptions } from "../../../utils/categoryOptions";
+import FileSaver from "file-saver";
+import { countryOptions } from "../../../utils/countryOptions";
 
 export default observer( function OutpostForm(){
 
@@ -62,6 +66,23 @@ export default observer( function OutpostForm(){
         }
         else setValidCoords(false);
     }
+    
+    // var helper:Array<any>=[];
+    // var countriesInfo = require('countries-information');
+    // countriesInfo=countriesInfo.getAllCountries();
+    // countriesInfo.forEach((e:any) => {
+    //     helper.push({text: e.name,
+    //                 value: e.name,
+    //                 emoji:e.emoji, 
+    //                 ioc:e.ioc,
+    //                 countryCallingCode:e.countryCallingCodes});
+    // });
+    // var blob = new Blob([JSON.stringify(helper)],{type: "text/plain;charset=utf-8"});
+    // FileSaver.saveAs(
+    //   blob,
+    //   `Countries_.json`
+    // );
+    // console.log(helper);
 
     if(loadingInitial) return <LoadingComponent content="Wczytywanie formularza"/>;
 
@@ -88,12 +109,13 @@ export default observer( function OutpostForm(){
                     <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
                      
                         <MyFieldInput  placeholder="Nazwa" name="name" label='Nazwa placówki'/> 
+                        <MyFieldSelect options={categoryOptions} placeholder="Kategoria Placówki" name="category" label='Kategoria'/>
+                        {/* <MyFieldSelect options={countryOptions} placeholder="Kraje" name="Kraje" label='Kraje'/> */}
                         <MyFieldTextArea rows={4}  placeholder="Opis" name="description" label='Opis'/> 
                         <MyFieldInput  placeholder="Kraj" name="country" label='Kraj'/> 
                         <MyFieldInput  placeholder="Miasto" name="city" label='Miasto'/> 
                         <MyFieldInput  placeholder="Ulica" name="street" label='Ulica'/> 
-                        <MyFieldInput  placeholder="Kategoria Placówki" name="category" label='Kategoria'/> 
-
+                        {/* <MyFieldInput  placeholder="Kategoria Placówki" name="category" label='Kategoria'/>  */}
                         <ButtonGroup>
                             <Button  
                             disabled={isSubmitting || !dirty || !isValid}
